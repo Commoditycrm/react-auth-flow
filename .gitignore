@@ -1,0 +1,52 @@
+# compiled output
+/dist
+/node_modules
+/**/node_modules
+dist
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# OS
+.DS_Store
+
+# Tests
+coverage
+/.nyc_output
+
+# IDEs and editors
+/.idea
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# IDE - VSCode
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+.history/
+
+# Serverless generated files
+cloudformation*
+*.zip
+package-lock*
+*.log
+.clinic
+node_modules
+
+**/generated/
+**/*.jar
+
+.env
+.env.dev
