@@ -35,8 +35,7 @@ export class EmailService {
       await SendGridClient.send(sendgridMessage);
       // TODO: Retry mechanism
       return true;
-    } catch (e) {
-      console.log(e);
+    } catch (e: any) {
       //   logger.error(`Error While sending email ${e}`);
     }
     return false;

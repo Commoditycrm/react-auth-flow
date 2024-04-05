@@ -17,7 +17,7 @@ export const BaseServer = {
     // Handle undefined routes
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (!res.headersSent) {
-        res.status(404).send('Not Found');
+        res.status(404).send('Path Not Found');
       } else {
         next();
       }
