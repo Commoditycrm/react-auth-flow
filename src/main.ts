@@ -38,7 +38,6 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    console.log('sent');
     // logger.info(`Email sent for: ${email}`);
     return { success: true };
   }
