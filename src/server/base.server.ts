@@ -23,9 +23,9 @@ export const BaseServer = {
       }
     });
 
-    app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-      res.status(501).send('Error happening');
-    });
+    // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+    //   res.status(501).send('Error happening');
+    // });
 
     return app;
   },
