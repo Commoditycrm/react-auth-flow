@@ -1,5 +1,6 @@
 import { Body, JsonController, Post } from 'routing-controllers';
 import { EmailDetail, EmailService, EmailType } from './email/sendgrid';
+import { EnvLoader } from './env/env.loader';
 import { FirebaseFunctions } from './functions/firebase';
 
 @JsonController('/users')
@@ -56,6 +57,31 @@ export class FirebaseUserController {
       type: EmailType.PASSWORD_RESET,
       message: {
         resetPasswordLink,
+      },
+    };
+
+    await this.emailService.sendEmail(emailDetail);
+
+    // logger.info(`Email sent for: ${email}`);
+
+    return { success: true };
+  }
+
+  @Post('/invite-user')
+  async inviteUser(@Body() inviteUser: { email: string; companyId: string }) {
+    const { email, companyId } = inviteUser;
+
+    // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+
+    const invitationLink = `${EnvLoader.getOrThrow(
+      'BASE_URL',
+    )}/invite?companyId=${companyId}`;
+
+    const emailDetail: EmailDetail = {
+      to: email,
+      type: EmailType.INVITE_USER,
+      message: {
+        invitationLink,
       },
     };
 

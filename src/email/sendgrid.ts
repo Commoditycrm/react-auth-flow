@@ -4,6 +4,7 @@ import { EnvLoader } from '../env/env.loader';
 export enum EmailType {
   FIREBASE_VERIFY = 'FIREBASE_VERIFY',
   PASSWORD_RESET = 'PASSWORD_RESET',
+  INVITE_USER = 'INVITE_USER',
 }
 
 export interface EmailDetail {
