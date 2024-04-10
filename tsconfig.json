@@ -1,14 +1,11 @@
 {
   "compilerOptions": {
-    // "types": ["node", "winston"],
-
-    "target": "es2017",
+    "target": "ES5",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
     "esModuleInterop": true,
     "module": "NodeNext",
     "moduleResolution": "NodeNext",
@@ -18,8 +15,10 @@
     "incremental": true,
     "strictPropertyInitialization": false,
     "emitDecoratorMetadata": true,
+    "outDir": "./dist",
+    "rootDir": "./src",
     "experimentalDecorators": true
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["src/**/*.ts"],
   "exclude": ["node_modules"]
 }
