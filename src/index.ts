@@ -1,5 +1,5 @@
-import { FirebaseUserController } from './src/main';
-import { BaseServer } from './src/server/base.server';
+import { FirebaseUserController } from './controllers/main';
+import { BaseServer } from './server/base.server';
 
 // Initialize server with controllers
 const app = BaseServer.init([FirebaseUserController], '/api');
