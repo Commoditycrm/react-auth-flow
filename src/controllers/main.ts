@@ -43,6 +43,36 @@ export class FirebaseUserController {
     return { success: true };
   }
 
+  @Post('/resend-verification')
+  async resendVerificationLink(
+    @Body()
+    reqBody: {
+      email: string;
+    },
+  ) {
+    const { email } = reqBody;
+
+    // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+
+    const verifyLink =
+      await FirebaseFunctions.getInstance().generateVerificationLink(
+        email?.trim(),
+      );
+
+    const emailDetail: EmailDetail = {
+      to: email,
+      type: EmailType.FIREBASE_VERIFY,
+      message: {
+        verifyLink,
+      },
+    };
+
+    await this.emailService.sendEmail(emailDetail);
+
+    // logger.info(`Email sent for: ${email}`);
+    return { success: true };
+  }
+
   @Post('/password-reset')
   async resetPassword(@Body() passwordRestBody: { email: string }) {
     const { email } = passwordRestBody;

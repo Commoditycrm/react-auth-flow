@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "npx tsc",
-    "start:prod": "node dist/index.js",
-    "start:dev": "nodemon src/index.ts"
+    "start:prod": "NODE_ENV=prod node dist/index.js",
+    "start:dev": "NODE_ENV=dev nodemon src/index.ts"
   },
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",

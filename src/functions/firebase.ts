@@ -37,13 +37,15 @@ export class FirebaseFunctions {
 
     await this.setUserClaims(user.uid, user.email);
 
-    const verifyLink = await this.admin.app
-      .auth()
-      .generateEmailVerificationLink(userInput.email);
+    const verifyLink = await this.generateVerificationLink(userInput.email);
 
     // logger.debug(`verifyLink: ${verifyLink}`);
 
     return verifyLink;
+  };
+
+  generateVerificationLink = async (email: string) => {
+    return await this.admin.app.auth().generateEmailVerificationLink(email);
   };
 
   resetPassword = async (email: string) => {
