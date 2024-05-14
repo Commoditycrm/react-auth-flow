@@ -24,37 +24,37 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnvLoader = void 0;
-var dotenv = __importStar(require("dotenv"));
-var detector_1 = require("./detector");
+const dotenv = __importStar(require("dotenv"));
+const detector_1 = require("./detector");
 exports.EnvLoader = {
-    get: function (variableName) { return process.env[variableName]; },
-    getOrThrow: function (variableName) {
+    get: (variableName) => process.env[variableName],
+    getOrThrow: (variableName) => {
         if (!process.env[variableName]) {
-            throw new Error("".concat(variableName, " not defined in the environment"));
+            throw new Error(`${variableName} not defined in the environment`);
         }
         return process.env[variableName];
     },
-    getInt: function (variableName) {
+    getInt: (variableName) => {
         if (process.env[variableName])
             return parseInt(process.env[variableName], 10);
         return undefined;
     },
-    getIntOrThrow: function (variableName) {
+    getIntOrThrow: (variableName) => {
         if (!process.env[variableName]) {
-            throw new Error("".concat(variableName, " not defined in the environment"));
+            throw new Error(`${variableName} not defined in the environment`);
         }
         return parseInt(process.env[variableName], 10);
     },
-    load: function () {
-        var config = (0, detector_1.getEnvFileName)();
-        console.log("Loading env ".concat(config));
+    load: () => {
+        const config = (0, detector_1.getEnvFileName)();
+        console.log(`Loading env ${config}`);
         dotenv.config({ path: config });
     },
     //
-    verify: function (variableNames) {
-        for (var i = 0; i < variableNames.length; i++) {
+    verify: (variableNames) => {
+        for (let i = 0; i < variableNames.length; i++) {
             if (!process.env[variableNames[i]])
-                throw new Error("Missing variable ".concat(variableNames[i]));
+                throw new Error(`Missing variable ${variableNames[i]}`);
         }
     },
 };

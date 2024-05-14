@@ -4,8 +4,8 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseAdmin = exports.FirebaseConfig = void 0;
-var firebase_admin_1 = __importDefault(require("firebase-admin"));
-var env_loader_1 = require("../env/env.loader");
+const firebase_admin_1 = __importDefault(require("firebase-admin"));
+const env_loader_1 = require("../env/env.loader");
 var FirebaseConfig;
 (function (FirebaseConfig) {
     FirebaseConfig["FIREBASE_API_KEY"] = "FIREBASE_API_KEY";
@@ -18,22 +18,21 @@ var FirebaseConfig;
     FirebaseConfig["FIREBASE_CLIENT_EMAIL"] = "FIREBASE_CLIENT_EMAIL";
     FirebaseConfig["FIREBASE_DYNAMIC_LINK_DOMAIN"] = "FIREBASE_DYNAMIC_LINK_DOMAIN";
 })(FirebaseConfig || (exports.FirebaseConfig = FirebaseConfig = {}));
-var FirebaseAdmin = /** @class */ (function () {
-    function FirebaseAdmin() {
-        var _this = this;
+class FirebaseAdmin {
+    constructor() {
         this.serviceAccount = {
             privateKey: env_loader_1.EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_PRIVATE_KEY),
             projectId: env_loader_1.EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_PROJECT_ID),
             clientEmail: env_loader_1.EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_CLIENT_EMAIL),
         };
-        this.adminInitFirebase = function () {
+        this.adminInitFirebase = () => {
             try {
                 if (!firebase_admin_1.default.apps.length) {
-                    _this.app = firebase_admin_1.default.initializeApp({
-                        credential: firebase_admin_1.default.credential.cert(_this.serviceAccount),
+                    this.app = firebase_admin_1.default.initializeApp({
+                        credential: firebase_admin_1.default.credential.cert(this.serviceAccount),
                     });
                 }
-                _this.app = firebase_admin_1.default.apps[0];
+                this.app = firebase_admin_1.default.apps[0];
             }
             catch (err) {
                 //   logger.error(`Failed to init admin firebase: ${err}`);
@@ -42,15 +41,14 @@ var FirebaseAdmin = /** @class */ (function () {
         };
         this.adminInitFirebase();
         if (!this.app) {
-            throw new Error("Firebase failed to initialise the adming app");
+            throw new Error(`Firebase failed to initialise the adming app`);
         }
     }
-    FirebaseAdmin.getInstance = function () {
+    static getInstance() {
         if (!FirebaseAdmin.instance) {
             FirebaseAdmin.instance = new FirebaseAdmin();
         }
         return FirebaseAdmin.instance;
-    };
-    return FirebaseAdmin;
-}());
+    }
+}
 exports.FirebaseAdmin = FirebaseAdmin;

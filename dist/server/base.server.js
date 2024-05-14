@@ -4,22 +4,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseServer = void 0;
-var morgan_1 = __importDefault(require("morgan"));
+const morgan_1 = __importDefault(require("morgan"));
 require("reflect-metadata");
-var routing_controllers_1 = require("routing-controllers");
-var detector_1 = require("../env/detector");
+const routing_controllers_1 = require("routing-controllers");
+const detector_1 = require("../env/detector");
 exports.BaseServer = {
-    init: function (controllers, routePrefix) {
-        if (routePrefix === void 0) { routePrefix = ''; }
-        var app = (0, routing_controllers_1.createExpressServer)({
-            controllers: controllers,
+    init: (controllers, routePrefix = '') => {
+        const app = (0, routing_controllers_1.createExpressServer)({
+            controllers,
             // middlewares: [CustomErrorHandler],
-            routePrefix: routePrefix,
+            routePrefix,
         });
         //log requests
         app.use((0, morgan_1.default)((0, detector_1.isProduction)() ? 'combined' : 'dev'));
         // Handle undefined routes
-        app.use(function (req, res, next) {
+        app.use((req, res, next) => {
             if (!res.headersSent) {
                 res.status(404).send('Path Not Found');
             }
@@ -32,10 +31,9 @@ exports.BaseServer = {
         // });
         return app;
     },
-    start: function (app, port) {
-        if (port === void 0) { port = 3000; }
-        var server = app.listen(port, function () {
-            console.log("\u26A1\uFE0F[server]: Server is running at http://localhost:".concat(port));
+    start: (app, port = 3000) => {
+        const server = app.listen(port, () => {
+            console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
         });
         return server;
     },
