@@ -13,5 +13,7 @@
       "dest": "dist/index.js"
     }
   ],
-  "IS_VERCEL": "true"
+  "env": {
+    "IS_VERCEL": "true"
+  }
 }
