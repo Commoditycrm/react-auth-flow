@@ -32,9 +32,14 @@ exports.BaseServer = {
         return app;
     },
     start: (app, port = 3000) => {
-        const server = app.listen(port, () => {
-            console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-        });
-        return server;
+        // const server = app.listen(port, () => {
+        //   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+        // });
+        if (!process.env.isVercel) {
+            app.listen(port, () => {
+                console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+            });
+        }
+        return app;
     },
 };

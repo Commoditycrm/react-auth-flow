@@ -31,10 +31,18 @@ export const BaseServer = {
   },
 
   start: (app: Express, port: number = 3000) => {
-    const server = app.listen(port, () => {
-      console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-    });
+    // const server = app.listen(port, () => {
+    //   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
+    // });
 
-    return server;
+    if (!process.env.isVercel) {
+      app.listen(port, () => {
+        console.log(
+          `⚡️[server]: Server is running at http://localhost:${port}`,
+        );
+      });
+    }
+
+    return app;
   },
 };
