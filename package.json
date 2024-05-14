@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "rimraf dist && tsc",
+    "build": "rimraf dist tsconfig.tsbuildinfo && tsc",
     "ts.check": "tsc --project tsconfig.json",
     "add-build": "git add dist",
     "start:prod": "NODE_ENV=prod node dist/index.js",
