@@ -4,11 +4,17 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    
-    "build": "tsc -p tsconfig.json && other-build-steps",
+    "build": "rimraf dist && tsc",
+    "ts.check": "tsc --project tsconfig.json",
+    "add-build": "git add dist",
     "start:prod": "NODE_ENV=prod node dist/index.js",
     "start:dev": "NODE_ENV=dev nodemon src/index.ts"
   },
+  "pre-commit": [
+    "ts.check",
+    "build",
+    "add-build"
+  ],
   "dependencies": {
     "@sendgrid/mail": "^7.7.0",
     "body-parser": "^1.20.2",
@@ -28,6 +34,8 @@
     "@types/morgan": "^1.9.9",
     "@types/node": "^20.11.30",
     "nodemon": "^3.1.0",
+    "pre-commit": "^1.2.2",
+    "rimraf": "^5.0.7",
     "ts-node": "^10.9.2",
     "typescript": "^5.4.4"
   }
