@@ -26,9 +26,12 @@ export const BaseServer = {
 
     app.use(
       cors({
+        credentials: true,
         maxAge: 600,
         methods: ['POST'],
-        origin: process.env.ALLOWED_ORIGINS?.split(','),
+        origin: 'https://react-flow-pi.vercel.app',
+        preflightContinue: false,
+        optionsSuccessStatus: 200,
       }),
     );
 
