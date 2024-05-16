@@ -4,7 +4,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseServer = void 0;
-const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 require("reflect-metadata");
 const routing_controllers_1 = require("routing-controllers");
@@ -27,7 +26,6 @@ exports.BaseServer = {
                 next();
             }
         });
-        app.use((0, cors_1.default)());
         // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         //   res.status(501).send('Error happening');
         // });

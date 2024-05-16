@@ -10,7 +10,11 @@
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "dist/index.js"
+      "dest": "dist/index.js",
+      "methods": ["POST", "OPTIONS"],
+      "headers": {
+        "Access-Control-Allow-Origin": "*"
+      }
     }
   ],
   "env": {

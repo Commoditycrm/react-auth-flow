@@ -1,4 +1,3 @@
-import cors from 'cors';
 import { Express, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import 'reflect-metadata';
@@ -23,18 +22,6 @@ export const BaseServer = {
         next();
       }
     });
-
-    app.use(
-      cors(),
-      //   {
-      //   credentials: true,
-      //   maxAge: 600,
-      //   methods: ['POST'],
-      //   origin: 'https://react-flow-pi.vercel.app',
-      //   preflightContinue: false,
-      //   optionsSuccessStatus: 200,
-      // }
-    );
 
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     //   res.status(501).send('Error happening');
