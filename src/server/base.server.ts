@@ -25,14 +25,15 @@ export const BaseServer = {
     });
 
     app.use(
-      cors({
-        credentials: true,
-        maxAge: 600,
-        methods: ['POST'],
-        origin: 'https://react-flow-pi.vercel.app',
-        preflightContinue: false,
-        optionsSuccessStatus: 200,
-      }),
+      cors(),
+      //   {
+      //   credentials: true,
+      //   maxAge: 600,
+      //   methods: ['POST'],
+      //   origin: 'https://react-flow-pi.vercel.app',
+      //   preflightContinue: false,
+      //   optionsSuccessStatus: 200,
+      // }
     );
 
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {

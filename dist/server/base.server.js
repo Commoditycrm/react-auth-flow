@@ -27,14 +27,7 @@ exports.BaseServer = {
                 next();
             }
         });
-        app.use((0, cors_1.default)({
-            credentials: true,
-            maxAge: 600,
-            methods: ['POST'],
-            origin: 'https://react-flow-pi.vercel.app',
-            preflightContinue: false,
-            optionsSuccessStatus: 200,
-        }));
+        app.use((0, cors_1.default)());
         // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         //   res.status(501).send('Error happening');
         // });
