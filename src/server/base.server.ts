@@ -1,3 +1,4 @@
+import cors from 'cors';
 import { Express, NextFunction, Request, Response } from 'express';
 import morgan from 'morgan';
 import 'reflect-metadata';
@@ -22,6 +23,13 @@ export const BaseServer = {
         next();
       }
     });
+
+    app.use(
+      cors({
+        credentials: true,
+        origin: process.env.ALLOWED_ORIGINS?.split(','),
+      }),
+    );
 
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     //   res.status(501).send('Error happening');

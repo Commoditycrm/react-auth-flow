@@ -4,12 +4,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.BaseServer = void 0;
+const cors_1 = __importDefault(require("cors"));
 const morgan_1 = __importDefault(require("morgan"));
 require("reflect-metadata");
 const routing_controllers_1 = require("routing-controllers");
 const detector_1 = require("../env/detector");
 exports.BaseServer = {
     init: (controllers, routePrefix = '') => {
+        var _a;
         const app = (0, routing_controllers_1.createExpressServer)({
             controllers,
             // middlewares: [CustomErrorHandler],
@@ -26,6 +28,10 @@ exports.BaseServer = {
                 next();
             }
         });
+        app.use((0, cors_1.default)({
+            credentials: true,
+            origin: (_a = process.env.ALLOWED_ORIGINS) === null || _a === void 0 ? void 0 : _a.split(','),
+        }));
         // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         //   res.status(501).send('Error happening');
         // });
