@@ -19,6 +19,8 @@ exports.BaseServer = {
         //log requests
         app.use((0, morgan_1.default)((0, detector_1.isProduction)() ? 'combined' : 'dev'));
         // Handle undefined routes
+        app.use((0, cors_1.default)());
+        app.options('*', (0, cors_1.default)());
         app.use((req, res, next) => {
             if (!res.headersSent) {
                 res.status(404).send('Path Not Found');
@@ -27,8 +29,6 @@ exports.BaseServer = {
                 next();
             }
         });
-        app.use((0, cors_1.default)());
-        app.options('*', (0, cors_1.default)());
         // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
         //   res.status(501).send('Error happening');
         // });

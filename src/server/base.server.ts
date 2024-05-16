@@ -16,6 +16,10 @@ export const BaseServer = {
     //log requests
     app.use(morgan(isProduction() ? 'combined' : 'dev'));
     // Handle undefined routes
+
+    app.use(cors());
+    app.options('*', cors());
+
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (!res.headersSent) {
         res.status(404).send('Path Not Found');
@@ -23,10 +27,6 @@ export const BaseServer = {
         next();
       }
     });
-
-    app.use(cors());
-    app.options('*', cors());
-
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     //   res.status(501).send('Error happening');
     // });
