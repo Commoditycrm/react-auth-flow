@@ -17,8 +17,15 @@ export const BaseServer = {
     app.use(morgan(isProduction() ? 'combined' : 'dev'));
     // Handle undefined routes
 
-    app.use(cors());
-    app.options('*', cors());
+    app.use(
+      cors({
+        credentials: true,
+        methods: ['POST', 'OPTIONS'],
+        origin: process.env.ALLOWED_ORIGINS?.split(','),
+        maxAge: 600,
+        optionsSuccessStatus: 200,
+      }),
+    );
 
     app.use((req: Request, res: Response, next: NextFunction) => {
       if (!res.headersSent) {

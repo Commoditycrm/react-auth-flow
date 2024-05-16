@@ -13,7 +13,7 @@
       "dest": "dist/index.js",
       "methods": ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       "headers": {
-        "Access-Control-Allow-Origin": "https://react-flow-pi.vercel.app"
+        "Access-Control-Allow-Origin": "PLACE_HOLDER_FOR_PASSING_LOGIC_TO_CORS_MIDDLEWARE"
       }
     }
   ],
