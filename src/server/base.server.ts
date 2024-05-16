@@ -34,6 +34,7 @@ export const BaseServer = {
         next();
       }
     });
+
     // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     //   res.status(501).send('Error happening');
     // });
@@ -42,10 +43,6 @@ export const BaseServer = {
   },
 
   start: (app: Express, port: number = 3000) => {
-    // const server = app.listen(port, () => {
-    //   console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
-    // });
-
     if (!process.env.isVercel) {
       app.listen(port, () => {
         console.log(
