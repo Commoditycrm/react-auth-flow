@@ -26,7 +26,8 @@ export const BaseServer = {
 
     app.use(
       cors({
-        credentials: true,
+        maxAge: 600,
+        methods: ['POST'],
         origin: process.env.ALLOWED_ORIGINS?.split(','),
       }),
     );

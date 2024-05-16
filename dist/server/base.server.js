@@ -29,7 +29,8 @@ exports.BaseServer = {
             }
         });
         app.use((0, cors_1.default)({
-            credentials: true,
+            maxAge: 600,
+            methods: ['POST'],
             origin: (_a = process.env.ALLOWED_ORIGINS) === null || _a === void 0 ? void 0 : _a.split(','),
         }));
         // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
