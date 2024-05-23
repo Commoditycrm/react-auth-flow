@@ -15,33 +15,6 @@ class FirebaseFunctions {
     constructor() {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
         this.admin = admin_1.FirebaseAdmin.getInstance();
-        this.createUser = (userInput) => __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.admin.app.auth().createUser({
-                email: userInput === null || userInput === void 0 ? void 0 : userInput.email,
-                password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
-            });
-            yield this.setUserClaims(user.uid, user.email);
-            const verifyLink = yield this.generateVerificationLink(userInput.email);
-            // logger.debug(`verifyLink: ${verifyLink}`);
-            return verifyLink;
-        });
-        this.generateVerificationLink = (email) => __awaiter(this, void 0, void 0, function* () {
-            return yield this.admin.app.auth().generateEmailVerificationLink(email);
-        });
-        this.resetPassword = (email) => __awaiter(this, void 0, void 0, function* () {
-            const passwordResetLink = yield this.admin.app
-                .auth()
-                .generatePasswordResetLink(email);
-            // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
-            return passwordResetLink;
-        });
-        this.setUserClaims = (userId, email) => __awaiter(this, void 0, void 0, function* () {
-            if (!userId || !email)
-                throw new Error('Invalid userId or Email');
-            const roles = this.getRoleByEmail(email);
-            yield this.admin.app.auth().setCustomUserClaims(userId, { roles });
-            return roles;
-        });
         this.admin = admin_1.FirebaseAdmin.getInstance();
     }
     isCompanyEmail(email) {
@@ -60,6 +33,49 @@ class FirebaseFunctions {
             FirebaseFunctions.instance = new FirebaseFunctions();
         }
         return FirebaseFunctions.instance;
+    }
+    createUser(userInput) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.admin.app.auth().createUser({
+                email: userInput === null || userInput === void 0 ? void 0 : userInput.email,
+                password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
+            });
+            yield this.setUserClaims(user.uid, user.email);
+            const verifyLink = yield this.generateVerificationLink(userInput.email);
+            // logger.debug(`verifyLink: ${verifyLink}`);
+            return verifyLink;
+        });
+    }
+    generateVerificationLink(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return yield this.admin.app.auth().generateEmailVerificationLink(email);
+        });
+    }
+    resetPassword(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const passwordResetLink = yield this.admin.app
+                .auth()
+                .generatePasswordResetLink(email);
+            // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
+            return passwordResetLink;
+        });
+    }
+    setUserClaims(userId, email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!userId || !email)
+                throw new Error('Invalid userId or Email');
+            const roles = this.getRoleByEmail(email);
+            yield this.admin.app.auth().setCustomUserClaims(userId, { roles });
+            return roles;
+        });
+    }
+    getUserByEmail(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!email)
+                throw new Error('Invalid userId or Email');
+            const user = yield this.admin.app.auth().getUserByEmail(email);
+            return user;
+        });
     }
 }
 exports.FirebaseFunctions = FirebaseFunctions;

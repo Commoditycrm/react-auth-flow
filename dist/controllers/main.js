@@ -53,6 +53,9 @@ let FirebaseUserController = class FirebaseUserController {
     resendVerificationLink(reqBody) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email } = reqBody;
+            if (!email) {
+                throw new Error('Input Validation Error');
+            }
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
             const verifyLink = yield firebase_1.FirebaseFunctions.getInstance().generateVerificationLink(email === null || email === void 0 ? void 0 : email.trim());
             const emailDetail = {
@@ -70,6 +73,9 @@ let FirebaseUserController = class FirebaseUserController {
     resetPassword(passwordRestBody) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email } = passwordRestBody;
+            if (!email) {
+                throw new Error('Input Validation Error');
+            }
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
             const resetPasswordLink = yield firebase_1.FirebaseFunctions.getInstance().resetPassword(email.trim());
             const emailDetail = {
@@ -86,11 +92,17 @@ let FirebaseUserController = class FirebaseUserController {
     }
     inviteUser(inviteUser) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, companyId } = inviteUser;
+            const { inviteeEmail, email, companyId } = inviteUser;
+            if (!inviteeEmail || !email || !companyId) {
+                throw new Error('Input Validation Error');
+            }
+            const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
+            if (!userExists)
+                throw new Error('Unauthorized Request!');
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
-            const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?companyId=${companyId}`;
+            const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
             const emailDetail = {
-                to: email,
+                to: inviteeEmail,
                 type: sendgrid_1.EmailType.INVITE_USER,
                 message: {
                     invitationLink,

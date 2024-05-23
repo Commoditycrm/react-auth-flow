@@ -29,5 +29,5 @@ let CustomErrorHandler = class CustomErrorHandler {
 };
 exports.CustomErrorHandler = CustomErrorHandler;
 exports.CustomErrorHandler = CustomErrorHandler = __decorate([
-    (0, routing_controllers_1.Middleware)({ type: 'after', priority: 100 })
+    (0, routing_controllers_1.Middleware)({ type: 'after' })
 ], CustomErrorHandler);
