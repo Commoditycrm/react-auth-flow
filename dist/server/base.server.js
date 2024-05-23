@@ -9,18 +9,14 @@ const morgan_1 = __importDefault(require("morgan"));
 require("reflect-metadata");
 const routing_controllers_1 = require("routing-controllers");
 const detector_1 = require("../env/detector");
-const error_handler_1 = require("./../error/error.handler");
 exports.BaseServer = {
     init: (controllers, routePrefix = '') => {
         var _a;
         const app = (0, routing_controllers_1.createExpressServer)({
             controllers,
-            middlewares: [error_handler_1.CustomErrorHandler],
+            // middlewares: [CustomErrorHandler],
             routePrefix,
         });
-        // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
-        //   return res.status(501).send('Error happening');
-        // });
         //log requests
         app.use((0, morgan_1.default)((0, detector_1.isProduction)() ? 'combined' : 'dev'));
         // Handle undefined routes
@@ -39,6 +35,9 @@ exports.BaseServer = {
                 next();
             }
         });
+        // app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+        //   res.status(501).send('Error happening');
+        // });
         return app;
     },
     start: (app, port = 3000) => {

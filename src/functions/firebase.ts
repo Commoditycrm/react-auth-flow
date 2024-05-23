@@ -1,3 +1,4 @@
+import { UserRecord } from 'firebase-admin/auth';
 import { FirebaseAdmin } from './admin';
 
 export class FirebaseFunctions {
@@ -29,7 +30,7 @@ export class FirebaseFunctions {
     return FirebaseFunctions.instance;
   }
 
-  createUser = async (userInput: { email: string; password: string }) => {
+  async createUser(userInput: { email: string; password: string }) {
     const user = await this.admin.app.auth().createUser({
       email: userInput?.email,
       password: userInput?.password,
@@ -42,13 +43,13 @@ export class FirebaseFunctions {
     // logger.debug(`verifyLink: ${verifyLink}`);
 
     return verifyLink;
-  };
+  }
 
-  generateVerificationLink = async (email: string) => {
+  async generateVerificationLink(email: string) {
     return await this.admin.app.auth().generateEmailVerificationLink(email);
-  };
+  }
 
-  resetPassword = async (email: string) => {
+  async resetPassword(email: string) {
     const passwordResetLink = await this.admin.app
       .auth()
       .generatePasswordResetLink(email);
@@ -56,17 +57,25 @@ export class FirebaseFunctions {
     // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
 
     return passwordResetLink;
-  };
+  }
 
-  setUserClaims = async (
+  async setUserClaims(
     userId: string | undefined,
     email: string | undefined,
-  ): Promise<string[]> => {
+  ): Promise<string[]> {
     if (!userId || !email) throw new Error('Invalid userId or Email');
 
     const roles = this.getRoleByEmail(email);
 
     await this.admin.app.auth().setCustomUserClaims(userId, { roles });
     return roles;
-  };
+  }
+
+  async getUserByEmail(email: string): Promise<UserRecord> {
+    if (!email) throw new Error('Invalid userId or Email');
+
+    const user = await this.admin.app.auth().getUserByEmail(email);
+
+    return user;
+  }
 }
