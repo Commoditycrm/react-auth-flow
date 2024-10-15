@@ -51,6 +51,9 @@ export class FirebaseUserController {
     },
   ) {
     const { email } = reqBody;
+    if (!email) {
+      throw new Error('Input Validation Error');
+    }
 
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
@@ -77,6 +80,9 @@ export class FirebaseUserController {
   async resetPassword(@Body() passwordRestBody: { email: string }) {
     const { email } = passwordRestBody;
 
+    if (!email) {
+      throw new Error('Input Validation Error');
+    }
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const resetPasswordLink =
@@ -98,17 +104,33 @@ export class FirebaseUserController {
   }
 
   @Post('/invite-user')
-  async inviteUser(@Body() inviteUser: { email: string; companyId: string }) {
-    const { email, companyId } = inviteUser;
+  async inviteUser(
+    @Body()
+    inviteUser: {
+      inviteeEmail: string;
+      email: string;
+      companyId: string;
+    },
+  ) {
+    const { inviteeEmail, email, companyId } = inviteUser;
 
+    if (!inviteeEmail || !email || !companyId) {
+      throw new Error('Input Validation Error');
+    }
+
+    const userExists = await FirebaseFunctions.getInstance().getUserByEmail(
+      email,
+    );
+
+    if (!userExists) throw new Error('Unauthorized Request!');
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const invitationLink = `${EnvLoader.getOrThrow(
       'BASE_URL',
-    )}/invite?companyId=${companyId}`;
+    )}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
 
     const emailDetail: EmailDetail = {
-      to: email,
+      to: inviteeEmail,
       type: EmailType.INVITE_USER,
       message: {
         invitationLink,
