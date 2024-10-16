@@ -2,6 +2,7 @@ import { Body, JsonController, Post } from 'routing-controllers';
 import { EmailDetail, EmailService, EmailType } from '../email/sendgrid';
 import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
+import { ActionCodeSettings } from 'firebase/auth';
 
 @JsonController('/users')
 export class FirebaseUserController {
@@ -80,13 +81,23 @@ export class FirebaseUserController {
   async resetPassword(@Body() passwordRestBody: { email: string }) {
     const { email } = passwordRestBody;
 
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/reset_password`;
+
+    const actionCodeSettings: ActionCodeSettings = {
+      url,
+      handleCodeInApp: true,
+    };
+
     if (!email) {
       throw new Error('Input Validation Error');
     }
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const resetPasswordLink =
-      await FirebaseFunctions.getInstance().resetPassword(email.trim());
+      await FirebaseFunctions.getInstance().resetPassword(
+        email.trim(),
+        actionCodeSettings,
+      );
 
     const emailDetail: EmailDetail = {
       to: email,
