@@ -73,11 +73,16 @@ let FirebaseUserController = class FirebaseUserController {
     resetPassword(passwordRestBody) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email } = passwordRestBody;
+            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/reset_password`;
+            const actionCodeSettings = {
+                url,
+                handleCodeInApp: true,
+            };
             if (!email) {
                 throw new Error('Input Validation Error');
             }
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
-            const resetPasswordLink = yield firebase_1.FirebaseFunctions.getInstance().resetPassword(email.trim());
+            const resetPasswordLink = yield firebase_1.FirebaseFunctions.getInstance().resetPassword(email.trim(), actionCodeSettings);
             const emailDetail = {
                 to: email,
                 type: sendgrid_1.EmailType.PASSWORD_RESET,

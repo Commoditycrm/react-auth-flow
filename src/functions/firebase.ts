@@ -1,5 +1,7 @@
 import { UserRecord } from 'firebase-admin/auth';
 import { FirebaseAdmin } from './admin';
+import { ActionCodeSettings } from 'firebase/auth';
+import { EnvLoader } from '../env/env.loader';
 
 export class FirebaseFunctions {
   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -46,13 +48,20 @@ export class FirebaseFunctions {
   }
 
   async generateVerificationLink(email: string) {
-    return await this.admin.app.auth().generateEmailVerificationLink(email);
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/login`;
+    const actionCodeSettings: ActionCodeSettings = {
+      url,
+      handleCodeInApp: true,
+    };
+    return await this.admin.app
+      .auth()
+      .generateEmailVerificationLink(email, actionCodeSettings);
   }
 
-  async resetPassword(email: string) {
+  async resetPassword(email: string, actionCodeSettings: ActionCodeSettings) {
     const passwordResetLink = await this.admin.app
       .auth()
-      .generatePasswordResetLink(email);
+      .generatePasswordResetLink(email, actionCodeSettings);
 
     // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
 

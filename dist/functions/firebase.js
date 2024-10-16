@@ -11,6 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseFunctions = void 0;
 const admin_1 = require("./admin");
+const env_loader_1 = require("../env/env.loader");
 class FirebaseFunctions {
     constructor() {
         // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -48,14 +49,21 @@ class FirebaseFunctions {
     }
     generateVerificationLink(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.admin.app.auth().generateEmailVerificationLink(email);
+            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/login`;
+            const actionCodeSettings = {
+                url,
+                handleCodeInApp: true,
+            };
+            return yield this.admin.app
+                .auth()
+                .generateEmailVerificationLink(email, actionCodeSettings);
         });
     }
-    resetPassword(email) {
+    resetPassword(email, actionCodeSettings) {
         return __awaiter(this, void 0, void 0, function* () {
             const passwordResetLink = yield this.admin.app
                 .auth()
-                .generatePasswordResetLink(email);
+                .generatePasswordResetLink(email, actionCodeSettings);
             // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
             return passwordResetLink;
         });
