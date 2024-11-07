@@ -1,15 +1,17 @@
-import { Body, JsonController, Post } from 'routing-controllers';
-import { EmailDetail, EmailService, EmailType } from '../email/sendgrid';
+import { Body, HttpError, JsonController, Post } from 'routing-controllers';
+import * as sendgrid from '../email/sendgrid';
 import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
 
 @JsonController('/users')
 export class FirebaseUserController {
-  emailService: EmailService;
+  emailService: sendgrid.EmailService;
+  projectEmailService: sendgrid.ProjectEmailService;
 
   constructor() {
-    this.emailService = EmailService.getInstance();
+    this.emailService = sendgrid.EmailService.getInstance();
+    this.projectEmailService = sendgrid.ProjectEmailService.getInstance();
   }
 
   @Post('/')
@@ -30,9 +32,9 @@ export class FirebaseUserController {
       password,
     });
 
-    const emailDetail: EmailDetail = {
+    const emailDetail: sendgrid.EmailDetail = {
       to: email,
-      type: EmailType.FIREBASE_VERIFY,
+      type: sendgrid.EmailType.FIREBASE_VERIFY,
       message: {
         verifyLink,
       },
@@ -63,9 +65,9 @@ export class FirebaseUserController {
         email?.trim(),
       );
 
-    const emailDetail: EmailDetail = {
+    const emailDetail: sendgrid.EmailDetail = {
       to: email,
-      type: EmailType.FIREBASE_VERIFY,
+      type: sendgrid.EmailType.FIREBASE_VERIFY,
       message: {
         verifyLink,
       },
@@ -99,9 +101,9 @@ export class FirebaseUserController {
         actionCodeSettings,
       );
 
-    const emailDetail: EmailDetail = {
+    const emailDetail: sendgrid.EmailDetail = {
       to: email,
-      type: EmailType.PASSWORD_RESET,
+      type: sendgrid.EmailType.PASSWORD_RESET,
       message: {
         resetPasswordLink,
       },
@@ -140,9 +142,9 @@ export class FirebaseUserController {
       'BASE_URL',
     )}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
 
-    const emailDetail: EmailDetail = {
+    const emailDetail: sendgrid.EmailDetail = {
       to: inviteeEmail,
-      type: EmailType.INVITE_USER,
+      type: sendgrid.EmailType.INVITE_USER,
       message: {
         invitationLink,
       },
@@ -152,6 +154,40 @@ export class FirebaseUserController {
 
     // logger.info(`Email sent for: ${email}`);
 
+    return { success: true };
+  }
+
+  @Post('/tag_user')
+  async tagUser(
+    @Body()
+    taggedData: sendgrid.UserTaggedDetail,
+  ) {
+    console.log(taggedData);
+    const { user_name, mention_url, item_name, mentioner_name, to, email } =
+      taggedData;
+    if (
+      !mention_url ||
+      !user_name ||
+      !item_name ||
+      !mentioner_name ||
+      !to ||
+      !email
+    ) {
+      throw new Error('Input Validation Error');
+    }
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+
+    const userDetail: sendgrid.UserTaggedDetail = {
+      ...taggedData,
+      type: sendgrid.EmailType.TAGGING_USER,
+      mention_url: url,
+    };
+    const userExists = await FirebaseFunctions.getInstance().getUserByEmail(
+      email,
+    );
+    if (!userExists) throw new Error('Unauthorized Request!');
+
+    await this.projectEmailService.sendProjectEmail(userDetail);
     return { success: true };
   }
 }
