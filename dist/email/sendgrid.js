@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EmailService = exports.EmailType = void 0;
+exports.ProjectEmailService = exports.EmailService = exports.EmailType = void 0;
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const env_loader_1 = require("../env/env.loader");
 var EmailType;
@@ -20,6 +20,7 @@ var EmailType;
     EmailType["FIREBASE_VERIFY"] = "FIREBASE_VERIFY";
     EmailType["PASSWORD_RESET"] = "PASSWORD_RESET";
     EmailType["INVITE_USER"] = "INVITE_USER";
+    EmailType["TAGGING_USER"] = "TAGGING_USER";
 })(EmailType || (exports.EmailType = EmailType = {}));
 class EmailService {
     constructor() {
@@ -58,3 +59,41 @@ class EmailService {
     }
 }
 exports.EmailService = EmailService;
+class ProjectEmailService {
+    constructor() {
+        this.apiKey = env_loader_1.EnvLoader.getOrThrow('SENDGRID_KEY');
+        this.from = env_loader_1.EnvLoader.getOrThrow('EMAIL_FROM');
+    }
+    sendProjectEmail(taggedData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const sendgridMessage = {
+                from: ProjectEmailService === null || ProjectEmailService === void 0 ? void 0 : ProjectEmailService.instance.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${taggedData === null || taggedData === void 0 ? void 0 : taggedData.type}_TEMPLATE_ID`),
+                to: taggedData.to,
+                dynamicTemplateData: {
+                    user_name: taggedData.user_name,
+                    item_name: taggedData.item_name,
+                    mentioner_name: taggedData.mentioner_name,
+                    mention_url: taggedData.mention_url,
+                    mention_text: taggedData === null || taggedData === void 0 ? void 0 : taggedData.message,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                return true;
+            }
+            catch (error) {
+                //   logger.error(`Error While sending email ${e}`);
+            }
+            return false;
+        });
+    }
+    static getInstance() {
+        if (!ProjectEmailService.instance) {
+            ProjectEmailService.instance = new ProjectEmailService();
+            mail_1.default.setApiKey(ProjectEmailService.instance.apiKey);
+        }
+        return ProjectEmailService.instance;
+    }
+}
+exports.ProjectEmailService = ProjectEmailService;

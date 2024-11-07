@@ -6,5 +6,5 @@ const base_server_1 = require("./server/base.server");
 const app = base_server_1.BaseServer.init([main_1.FirebaseUserController], '/api');
 //TODO: setup logger, setup error handler
 // Start server
-const server = base_server_1.BaseServer.start(app, 3000);
+const server = base_server_1.BaseServer.start(app, 4000);
 exports.default = server;
