@@ -6,6 +6,7 @@ export enum EmailType {
   PASSWORD_RESET = 'PASSWORD_RESET',
   INVITE_USER = 'INVITE_USER',
   TAGGING_USER = 'TAGGING_USER',
+  ASSIGN_USER_IN_WORK_ITEM = 'ASSIGN_USER_IN_WORK_ITEM',
 }
 
 export interface EmailDetail {
@@ -15,11 +16,14 @@ export interface EmailDetail {
 }
 
 export interface UserTaggedDetail extends EmailDetail {
+  userDetail: Array<{ email: string; name: string }>;
   user_name: string;
   mentioner_name: string;
   item_name: string;
   mention_url: string;
-  email:string
+  email: string;
+  item_type: string;
+  item_uid: number;
 }
 
 export class EmailService {
@@ -67,17 +71,21 @@ export class ProjectEmailService {
 
   from = EnvLoader.getOrThrow('EMAIL_FROM');
   async sendProjectEmail(taggedData: UserTaggedDetail): Promise<boolean> {
-    const sendgridMessage: SendGridClient.MailDataRequired = {
+    const sendgridMessage = {
       from: ProjectEmailService?.instance.from,
       templateId: EnvLoader.getOrThrow(`${taggedData?.type}_TEMPLATE_ID`),
-      to: taggedData.to,
-      dynamicTemplateData: {
-        user_name: taggedData.user_name,
-        item_name: taggedData.item_name,
-        mentioner_name: taggedData.mentioner_name,
-        mention_url: taggedData.mention_url,
-        mention_text: taggedData?.message,
-      },
+      personalizations: taggedData.userDetail.map((user) => ({
+        to: user.email,
+        dynamicTemplateData: {
+          user_name: user.name,
+          item_name: taggedData.item_name,
+          mentioner_name: taggedData.mentioner_name,
+          mention_url: taggedData.mention_url,
+          message: taggedData.message,
+          item_type: taggedData.item_type,
+          item_uid: taggedData.item_uid,
+        },
+      })),
     };
     try {
       await SendGridClient.send(sendgridMessage);

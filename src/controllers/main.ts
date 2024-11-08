@@ -1,4 +1,4 @@
-import { Body, HttpError, JsonController, Post } from 'routing-controllers';
+import { Body, JsonController, Post } from 'routing-controllers';
 import * as sendgrid from '../email/sendgrid';
 import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
@@ -162,22 +162,29 @@ export class FirebaseUserController {
     @Body()
     taggedData: sendgrid.UserTaggedDetail,
   ) {
-    console.log(taggedData);
-    const { user_name, mention_url, item_name, mentioner_name, to, email } =
-      taggedData;
+    const {
+      mention_url,
+      item_name,
+      mentioner_name,
+      email,
+      userDetail,
+      message,
+      item_type,
+    } = taggedData;
     if (
       !mention_url ||
-      !user_name ||
       !item_name ||
       !mentioner_name ||
-      !to ||
-      !email
+      !email ||
+      !userDetail ||
+      !message ||
+      !item_type
     ) {
       throw new Error('Input Validation Error');
     }
     const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
 
-    const userDetail: sendgrid.UserTaggedDetail = {
+    const useEmailDetail: sendgrid.UserTaggedDetail = {
       ...taggedData,
       type: sendgrid.EmailType.TAGGING_USER,
       mention_url: url,
@@ -187,7 +194,48 @@ export class FirebaseUserController {
     );
     if (!userExists) throw new Error('Unauthorized Request!');
 
-    await this.projectEmailService.sendProjectEmail(userDetail);
+    await this.projectEmailService.sendProjectEmail(useEmailDetail);
+    return { success: true };
+  }
+
+  @Post('/assign') async assignUser(
+    @Body()
+    taggedData: sendgrid.UserTaggedDetail,
+  ) {
+    const {
+      mention_url,
+      item_name,
+      mentioner_name,
+      email,
+      userDetail,
+      item_type,
+      item_uid,
+    } = taggedData;
+
+    if (
+      !mention_url ||
+      !item_name ||
+      !mentioner_name ||
+      !email ||
+      !userDetail ||
+      !item_type ||
+      !item_uid
+    ) {
+      throw new Error('Input Validation Error');
+    }
+
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+
+    const useEmailDetail: sendgrid.UserTaggedDetail = {
+      ...taggedData,
+      type: sendgrid.EmailType.ASSIGN_USER_IN_WORK_ITEM,
+      mention_url: url,
+    };
+    const userExists = await FirebaseFunctions.getInstance().getUserByEmail(
+      email,
+    );
+    if (!userExists) throw new Error('Unauthorized Request!');
+    await this.projectEmailService.sendProjectEmail(useEmailDetail);
     return { success: true };
   }
 }

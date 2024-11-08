@@ -144,22 +144,43 @@ let FirebaseUserController = class FirebaseUserController {
     }
     tagUser(taggedData) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(taggedData);
-            const { user_name, mention_url, item_name, mentioner_name, to, email } = taggedData;
+            const { mention_url, item_name, mentioner_name, email, userDetail, message, item_type, } = taggedData;
             if (!mention_url ||
-                !user_name ||
                 !item_name ||
                 !mentioner_name ||
-                !to ||
-                !email) {
+                !email ||
+                !userDetail ||
+                !message ||
+                !item_type) {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
-            const userDetail = Object.assign(Object.assign({}, taggedData), { type: sendgrid.EmailType.TAGGING_USER, mention_url: url });
+            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: sendgrid.EmailType.TAGGING_USER, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
                 throw new Error('Unauthorized Request!');
-            yield this.projectEmailService.sendProjectEmail(userDetail);
+            yield this.projectEmailService.sendProjectEmail(useEmailDetail);
+            return { success: true };
+        });
+    }
+    assignUser(taggedData) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { mention_url, item_name, mentioner_name, email, userDetail, item_type, item_uid, } = taggedData;
+            if (!mention_url ||
+                !item_name ||
+                !mentioner_name ||
+                !email ||
+                !userDetail ||
+                !item_type ||
+                !item_uid) {
+                throw new Error('Input Validation Error');
+            }
+            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: sendgrid.EmailType.ASSIGN_USER_IN_WORK_ITEM, mention_url: url });
+            const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
+            if (!userExists)
+                throw new Error('Unauthorized Request!');
+            yield this.projectEmailService.sendProjectEmail(useEmailDetail);
             return { success: true };
         });
     }
@@ -200,6 +221,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "tagUser", null);
+__decorate([
+    (0, routing_controllers_1.Post)('/assign'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FirebaseUserController.prototype, "assignUser", null);
 exports.FirebaseUserController = FirebaseUserController = __decorate([
     (0, routing_controllers_1.JsonController)('/users'),
     __metadata("design:paramtypes", [])

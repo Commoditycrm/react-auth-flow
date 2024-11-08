@@ -21,6 +21,7 @@ var EmailType;
     EmailType["PASSWORD_RESET"] = "PASSWORD_RESET";
     EmailType["INVITE_USER"] = "INVITE_USER";
     EmailType["TAGGING_USER"] = "TAGGING_USER";
+    EmailType["ASSIGN_USER_IN_WORK_ITEM"] = "ASSIGN_USER_IN_WORK_ITEM";
 })(EmailType || (exports.EmailType = EmailType = {}));
 class EmailService {
     constructor() {
@@ -69,14 +70,18 @@ class ProjectEmailService {
             const sendgridMessage = {
                 from: ProjectEmailService === null || ProjectEmailService === void 0 ? void 0 : ProjectEmailService.instance.from,
                 templateId: env_loader_1.EnvLoader.getOrThrow(`${taggedData === null || taggedData === void 0 ? void 0 : taggedData.type}_TEMPLATE_ID`),
-                to: taggedData.to,
-                dynamicTemplateData: {
-                    user_name: taggedData.user_name,
-                    item_name: taggedData.item_name,
-                    mentioner_name: taggedData.mentioner_name,
-                    mention_url: taggedData.mention_url,
-                    mention_text: taggedData === null || taggedData === void 0 ? void 0 : taggedData.message,
-                },
+                personalizations: taggedData.userDetail.map((user) => ({
+                    to: user.email,
+                    dynamicTemplateData: {
+                        user_name: user.name,
+                        item_name: taggedData.item_name,
+                        mentioner_name: taggedData.mentioner_name,
+                        mention_url: taggedData.mention_url,
+                        message: taggedData.message,
+                        item_type: taggedData.item_type,
+                        item_uid: taggedData.item_uid,
+                    },
+                })),
             };
             try {
                 yield mail_1.default.send(sendgridMessage);
