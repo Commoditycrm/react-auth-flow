@@ -171,8 +171,7 @@ let FirebaseUserController = class FirebaseUserController {
                 !mentioner_name ||
                 !email ||
                 !userDetail ||
-                !item_type ||
-                !item_uid) {
+                !item_type) {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;

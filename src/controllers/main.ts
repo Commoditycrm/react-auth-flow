@@ -218,8 +218,7 @@ export class FirebaseUserController {
       !mentioner_name ||
       !email ||
       !userDetail ||
-      !item_type ||
-      !item_uid
+      !item_type
     ) {
       throw new Error('Input Validation Error');
     }
