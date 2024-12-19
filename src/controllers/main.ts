@@ -135,8 +135,15 @@ export class FirebaseUserController {
       email,
     );
 
+    const invitedUserExists =
+      await FirebaseFunctions.getInstance().getUserByEmail(inviteeEmail);
+
     if (!userExists) throw new Error('Unauthorized Request!');
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+
+    if (invitedUserExists) {
+      throw new Error('User already exists');
+    }
 
     const invitationLink = `${EnvLoader.getOrThrow(
       'BASE_URL',
