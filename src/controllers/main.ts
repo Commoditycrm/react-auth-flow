@@ -31,6 +31,7 @@ export class FirebaseUserController {
       email: email?.trim(),
       password,
     });
+    const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
 
     const emailDetail: sendgrid.EmailDetail = {
       to: email,
@@ -43,7 +44,7 @@ export class FirebaseUserController {
     await this.emailService.sendEmail(emailDetail);
 
     // logger.info(`Email sent for: ${email}`);
-    return { success: true };
+    return { success: true, link: verifyLink, expiresAt: expirationTime };
   }
 
   @Post('/resend-verification')

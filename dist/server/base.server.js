@@ -14,9 +14,6 @@ exports.BaseServer = {
         var _a;
         const app = (0, routing_controllers_1.createExpressServer)({
             controllers,
-            cors: {
-                origin: "*"
-            },
             // middlewares: [CustomErrorHandler],
             routePrefix,
         });
@@ -43,7 +40,7 @@ exports.BaseServer = {
         // });
         return app;
     },
-    start: (app, port = 4000) => {
+    start: (app, port = 3000) => {
         if (!process.env.isVercel) {
             app.listen(port, () => {
                 console.log(`⚡️[server]: Server is running at http://localhost:${port}`);

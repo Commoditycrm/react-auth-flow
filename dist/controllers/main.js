@@ -62,6 +62,7 @@ let FirebaseUserController = class FirebaseUserController {
                 email: email === null || email === void 0 ? void 0 : email.trim(),
                 password,
             });
+            const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
             const emailDetail = {
                 to: email,
                 type: sendgrid.EmailType.FIREBASE_VERIFY,
@@ -71,7 +72,7 @@ let FirebaseUserController = class FirebaseUserController {
             };
             yield this.emailService.sendEmail(emailDetail);
             // logger.info(`Email sent for: ${email}`);
-            return { success: true };
+            return { success: true, link: verifyLink, expiresAt: expirationTime };
         });
     }
     resendVerificationLink(reqBody) {
@@ -126,9 +127,13 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
+            const invitedUserExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(inviteeEmail);
             if (!userExists)
                 throw new Error('Unauthorized Request!');
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+            if (invitedUserExists) {
+                throw new Error('User already exists');
+            }
             const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
             const emailDetail = {
                 to: inviteeEmail,
