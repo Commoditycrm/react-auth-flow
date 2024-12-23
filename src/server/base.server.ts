@@ -9,6 +9,9 @@ export const BaseServer = {
   init: (controllers: Array<Function>, routePrefix: string = '') => {
     const app = createExpressServer({
       controllers,
+      cors: {
+        origin: '*',
+      },
       // middlewares: [CustomErrorHandler],
       routePrefix,
     });
@@ -42,7 +45,7 @@ export const BaseServer = {
     return app;
   },
 
-  start: (app: Express, port: number = 3000) => {
+  start: (app: Express, port: number = 4000) => {
     if (!process.env.isVercel) {
       app.listen(port, () => {
         console.log(

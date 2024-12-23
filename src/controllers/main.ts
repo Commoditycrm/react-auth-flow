@@ -52,9 +52,10 @@ export class FirebaseUserController {
     @Body()
     reqBody: {
       email: string;
+      link: string;
     },
   ) {
-    const { email } = reqBody;
+    const { email, link } = reqBody;
     if (!email) {
       throw new Error('Input Validation Error');
     }
@@ -62,9 +63,10 @@ export class FirebaseUserController {
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const verifyLink =
-      await FirebaseFunctions.getInstance().generateVerificationLink(
+      link ??
+      (await FirebaseFunctions.getInstance().generateVerificationLink(
         email?.trim(),
-      );
+      ));
 
     const emailDetail: sendgrid.EmailDetail = {
       to: email,

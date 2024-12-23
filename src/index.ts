@@ -6,6 +6,6 @@ const app = BaseServer.init([FirebaseUserController], '/api');
 
 //TODO: setup logger, setup error handler
 // Start server
-const server = BaseServer.start(app, 3000);
+const server = BaseServer.start(app, 4000);
 
 export default server;
