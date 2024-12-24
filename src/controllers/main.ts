@@ -138,8 +138,16 @@ export class FirebaseUserController {
       email,
     );
 
-    const invitedUserExists =
-      await FirebaseFunctions.getInstance().getUserByEmail(inviteeEmail);
+    let invitedUserExists = null;
+    try {
+      invitedUserExists = await FirebaseFunctions.getInstance().getUserByEmail(
+        inviteeEmail,
+      );
+    } catch (error) {
+      if ((error as any).code !== 'auth/user-not-found') {
+        throw error; // rethrow if it's a different error
+      }
+    }
 
     if (!userExists) throw new Error('Unauthorized Request!');
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
