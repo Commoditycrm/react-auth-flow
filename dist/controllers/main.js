@@ -127,7 +127,15 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
-            const invitedUserExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(inviteeEmail);
+            let invitedUserExists = null;
+            try {
+                invitedUserExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(inviteeEmail);
+            }
+            catch (error) {
+                if (error.code !== 'auth/user-not-found') {
+                    throw error; // rethrow if it's a different error
+                }
+            }
             if (!userExists)
                 throw new Error('Unauthorized Request!');
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
