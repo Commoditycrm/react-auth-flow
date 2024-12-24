@@ -82,7 +82,8 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
-            const verifyLink = link !== null && link !== void 0 ? link : (yield firebase_1.FirebaseFunctions.getInstance().generateVerificationLink(email === null || email === void 0 ? void 0 : email.trim()));
+            const verifyLink = link ||
+                (yield firebase_1.FirebaseFunctions.getInstance().generateVerificationLink(email === null || email === void 0 ? void 0 : email.trim()));
             const emailDetail = {
                 to: email,
                 type: sendgrid.EmailType.FIREBASE_VERIFY,

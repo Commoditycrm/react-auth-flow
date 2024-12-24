@@ -63,7 +63,7 @@ export class FirebaseUserController {
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const verifyLink =
-      link ??
+      link ||
       (await FirebaseFunctions.getInstance().generateVerificationLink(
         email?.trim(),
       ));

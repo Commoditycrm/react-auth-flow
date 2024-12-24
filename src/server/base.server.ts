@@ -9,9 +9,9 @@ export const BaseServer = {
   init: (controllers: Array<Function>, routePrefix: string = '') => {
     const app = createExpressServer({
       controllers,
-      cors: {
-        origin: '*',
-      },
+      // cors: {
+      //   origin: '*',
+      // },
       // middlewares: [CustomErrorHandler],
       routePrefix,
     });
