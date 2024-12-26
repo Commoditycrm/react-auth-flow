@@ -47,6 +47,12 @@ class FirebaseFunctions {
             return verifyLink;
         });
     }
+    deleteUser(email) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.admin.app.auth().getUserByEmail(email);
+            yield this.admin.app.auth().deleteUser(user.uid);
+        });
+    }
     generateVerificationLink(email) {
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/login`;

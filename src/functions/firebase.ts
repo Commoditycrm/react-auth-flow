@@ -1,6 +1,6 @@
 import { UserRecord } from 'firebase-admin/auth';
 import { FirebaseAdmin } from './admin';
-import { ActionCodeSettings } from 'firebase/auth';
+import { ActionCodeSettings, deleteUser } from 'firebase/auth';
 import { EnvLoader } from '../env/env.loader';
 
 export class FirebaseFunctions {
@@ -45,6 +45,11 @@ export class FirebaseFunctions {
     // logger.debug(`verifyLink: ${verifyLink}`);
 
     return verifyLink;
+  }
+
+  async deleteUser(email: string) {
+    const user = await this.admin.app.auth().getUserByEmail(email);
+    await this.admin.app.auth().deleteUser(user.uid);
   }
 
   async generateVerificationLink(email: string) {

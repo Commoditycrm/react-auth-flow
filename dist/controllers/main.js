@@ -75,6 +75,18 @@ let FirebaseUserController = class FirebaseUserController {
             return { success: true, link: verifyLink, expiresAt: expirationTime };
         });
     }
+    deleteUser(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email } = user;
+            if (!email) {
+                throw new Error('Input Validation Error');
+            }
+            // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+            yield firebase_1.FirebaseFunctions.getInstance().deleteUser(email);
+            // logger.info(`User deleted: ${email}`);
+            return { success: true };
+        });
+    }
     resendVerificationLink(reqBody) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, link } = reqBody;
@@ -206,6 +218,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "createUser", null);
+__decorate([
+    (0, routing_controllers_1.Delete)('/'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FirebaseUserController.prototype, "deleteUser", null);
 __decorate([
     (0, routing_controllers_1.Post)('/resend-verification'),
     __param(0, (0, routing_controllers_1.Body)()),

@@ -1,4 +1,4 @@
-import { Body, JsonController, Post } from 'routing-controllers';
+import { Body, Delete, JsonController, Post } from 'routing-controllers';
 import * as sendgrid from '../email/sendgrid';
 import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
@@ -45,6 +45,21 @@ export class FirebaseUserController {
 
     // logger.info(`Email sent for: ${email}`);
     return { success: true, link: verifyLink, expiresAt: expirationTime };
+  }
+
+  @Delete('/')
+  async deleteUser(@Body() user: { email: string }) {
+    const { email } = user;
+    if (!email) {
+      throw new Error('Input Validation Error');
+    }
+
+    // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+
+    await FirebaseFunctions.getInstance().deleteUser(email);
+
+    // logger.info(`User deleted: ${email}`);
+    return { success: true };
   }
 
   @Post('/resend-verification')
