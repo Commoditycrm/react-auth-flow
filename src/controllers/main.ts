@@ -255,4 +255,25 @@ export class FirebaseUserController {
     await this.projectEmailService.sendProjectEmail(useEmailDetail);
     return { success: true };
   }
+
+  @Post('/finish_sign_up') async finishSignUp(
+    @Body()
+    user: {
+      email: string;
+      password: string;
+      photoURL: string;
+      name: string;
+    },
+  ) {
+    const { email, password, name, photoURL } = user;
+
+    if (!email || !password || !name) {
+      throw new Error('Invalid Email or Password');
+    }
+
+    const { token } = await FirebaseFunctions.getInstance().createInvitedUser(
+      user,
+    );
+    return { token };
+  }
 }
