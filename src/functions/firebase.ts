@@ -1,6 +1,6 @@
 import { UserRecord } from 'firebase-admin/auth';
 import { FirebaseAdmin } from './admin';
-import { ActionCodeSettings } from 'firebase/auth';
+import { ActionCodeSettings, User } from 'firebase/auth';
 import { EnvLoader } from '../env/env.loader';
 
 export class FirebaseFunctions {
@@ -86,5 +86,21 @@ export class FirebaseFunctions {
     const user = await this.admin.app.auth().getUserByEmail(email);
 
     return user;
+  }
+
+  async createInvitedUser(userInput: {
+    email: string;
+    password: string;
+    name: string;
+  }): Promise<{ token: string }> {
+    const user = await this.admin.app.auth().createUser({
+      email: userInput?.email,
+      password: userInput?.password,
+      displayName: userInput?.name,
+      emailVerified: true,
+    });
+    await this.setUserClaims(user.uid, user.email);
+    const token = await this.admin.app.auth().createCustomToken(user.uid);
+    return { token };
   }
 }

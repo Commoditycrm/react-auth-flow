@@ -85,5 +85,18 @@ class FirebaseFunctions {
             return user;
         });
     }
+    createInvitedUser(userInput) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const user = yield this.admin.app.auth().createUser({
+                email: userInput === null || userInput === void 0 ? void 0 : userInput.email,
+                password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
+                displayName: userInput === null || userInput === void 0 ? void 0 : userInput.name,
+                emailVerified: true,
+            });
+            yield this.setUserClaims(user.uid, user.email);
+            const token = yield this.admin.app.auth().createCustomToken(user.uid);
+            return { token };
+        });
+    }
 }
 exports.FirebaseFunctions = FirebaseFunctions;

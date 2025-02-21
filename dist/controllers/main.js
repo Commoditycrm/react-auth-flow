@@ -197,6 +197,16 @@ let FirebaseUserController = class FirebaseUserController {
             return { success: true };
         });
     }
+    finishSignUp(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { email, password, name, photoURL } = user;
+            if (!email || !password || !name) {
+                throw new Error('Invalid Email or Password');
+            }
+            const { token } = yield firebase_1.FirebaseFunctions.getInstance().createInvitedUser(user);
+            return { token };
+        });
+    }
 };
 exports.FirebaseUserController = FirebaseUserController;
 __decorate([
@@ -241,6 +251,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "assignUser", null);
+__decorate([
+    (0, routing_controllers_1.Post)('/finish_sign_up'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FirebaseUserController.prototype, "finishSignUp", null);
 exports.FirebaseUserController = FirebaseUserController = __decorate([
     (0, routing_controllers_1.JsonController)('/users'),
     __metadata("design:paramtypes", [])
