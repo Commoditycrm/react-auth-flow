@@ -40,6 +40,7 @@ class FirebaseFunctions {
             const user = yield this.admin.app.auth().createUser({
                 email: userInput === null || userInput === void 0 ? void 0 : userInput.email,
                 password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
+                displayName: userInput === null || userInput === void 0 ? void 0 : userInput.name,
             });
             yield this.setUserClaims(user.uid, user.email);
             const verifyLink = yield this.generateVerificationLink(userInput.email);

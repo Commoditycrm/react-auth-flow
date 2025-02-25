@@ -32,10 +32,15 @@ export class FirebaseFunctions {
     return FirebaseFunctions.instance;
   }
 
-  async createUser(userInput: { email: string; password: string }) {
+  async createUser(userInput: {
+    email: string;
+    password: string;
+    name: string;
+  }) {
     const user = await this.admin.app.auth().createUser({
       email: userInput?.email,
       password: userInput?.password,
+      displayName: userInput?.name,
     });
 
     await this.setUserClaims(user.uid, user.email);

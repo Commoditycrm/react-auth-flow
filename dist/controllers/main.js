@@ -56,11 +56,12 @@ let FirebaseUserController = class FirebaseUserController {
     }
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password } = user;
+            const { email, password, name } = user;
             // logger.info(`Processing request for : ${email} with locale: ${locale}`);
             const verifyLink = yield firebase_1.FirebaseFunctions.getInstance().createUser({
                 email: email === null || email === void 0 ? void 0 : email.trim(),
                 password,
+                name
             });
             const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
             const emailDetail = {
@@ -210,7 +211,7 @@ let FirebaseUserController = class FirebaseUserController {
 };
 exports.FirebaseUserController = FirebaseUserController;
 __decorate([
-    (0, routing_controllers_1.Post)('/'),
+    (0, routing_controllers_1.Post)('/users'),
     __param(0, (0, routing_controllers_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -259,6 +260,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "finishSignUp", null);
 exports.FirebaseUserController = FirebaseUserController = __decorate([
-    (0, routing_controllers_1.JsonController)('/users'),
+    (0, routing_controllers_1.JsonController)('/'),
     __metadata("design:paramtypes", [])
 ], FirebaseUserController);
