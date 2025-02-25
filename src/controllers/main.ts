@@ -4,7 +4,7 @@ import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
 
-@JsonController('/')
+@JsonController('/users')
 export class FirebaseUserController {
   emailService: sendgrid.EmailService;
   projectEmailService: sendgrid.ProjectEmailService;
@@ -14,7 +14,7 @@ export class FirebaseUserController {
     this.projectEmailService = sendgrid.ProjectEmailService.getInstance();
   }
 
-  @Post('/users')
+  @Post('/')
   async createUser(
     @Body()
     user: {
