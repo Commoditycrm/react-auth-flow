@@ -4,7 +4,7 @@ import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
 
-@JsonController('/users')
+@JsonController('/')
 export class FirebaseUserController {
   emailService: sendgrid.EmailService;
   projectEmailService: sendgrid.ProjectEmailService;
@@ -14,22 +14,24 @@ export class FirebaseUserController {
     this.projectEmailService = sendgrid.ProjectEmailService.getInstance();
   }
 
-  @Post('/')
+  @Post('/users')
   async createUser(
     @Body()
     user: {
       email: string;
+      name:string;
       password: string;
       photoURL: string;
     },
   ) {
-    const { email, password } = user;
+    const { email, password,name } = user;
 
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const verifyLink = await FirebaseFunctions.getInstance().createUser({
       email: email?.trim(),
       password,
+      name
     });
     const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
 
