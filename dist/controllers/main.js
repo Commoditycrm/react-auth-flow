@@ -211,7 +211,7 @@ let FirebaseUserController = class FirebaseUserController {
 };
 exports.FirebaseUserController = FirebaseUserController;
 __decorate([
-    (0, routing_controllers_1.Post)('/users'),
+    (0, routing_controllers_1.Post)('/'),
     __param(0, (0, routing_controllers_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -260,6 +260,6 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "finishSignUp", null);
 exports.FirebaseUserController = FirebaseUserController = __decorate([
-    (0, routing_controllers_1.JsonController)('/'),
+    (0, routing_controllers_1.JsonController)('/users'),
     __metadata("design:paramtypes", [])
 ], FirebaseUserController);
