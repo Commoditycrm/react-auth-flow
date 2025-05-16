@@ -3,6 +3,7 @@ import * as sendgrid from '../email/sendgrid';
 import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
+import jwt from 'jsonwebtoken';
 
 @JsonController('/users')
 export class FirebaseUserController {
@@ -19,19 +20,19 @@ export class FirebaseUserController {
     @Body()
     user: {
       email: string;
-      name:string;
+      name: string;
       password: string;
       photoURL: string;
     },
   ) {
-    const { email, password,name } = user;
+    const { email, password, name } = user;
 
     // logger.info(`Processing request for : ${email} with locale: ${locale}`);
 
     const verifyLink = await FirebaseFunctions.getInstance().createUser({
       email: email?.trim(),
       password,
-      name
+      name,
     });
     const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
 
@@ -157,10 +158,20 @@ export class FirebaseUserController {
     if (invitedUserExists) {
       throw new Error('User already exists');
     }
+    const token = jwt.sign(
+      {
+        inviteeEmail,
+        orgId: companyId,
+        role: 'invitee',
+        sub: inviteeEmail,
+      },
+      process.env.INVITE_JWT_SECRET!,
+      { expiresIn: '1d' },
+    );
 
     const invitationLink = `${EnvLoader.getOrThrow(
       'BASE_URL',
-    )}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
+    )}/invite?token=${token}`;
 
     const emailDetail: sendgrid.EmailDetail = {
       to: inviteeEmail,
@@ -174,7 +185,7 @@ export class FirebaseUserController {
 
     // logger.info(`Email sent for: ${email}`);
 
-    return { success: true };
+    return { success: true, token };
   }
 
   @Post('/tag_user')
@@ -273,9 +284,8 @@ export class FirebaseUserController {
       throw new Error('Invalid Email or Password');
     }
 
-    const { token } = await FirebaseFunctions.getInstance().createInvitedUser(
-      user,
-    );
-    return { token };
+    const { user: userRecord } =
+      await FirebaseFunctions.getInstance().createInvitedUser(user);
+    return { user: userRecord };
   }
 }

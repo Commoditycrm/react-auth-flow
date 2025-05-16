@@ -95,8 +95,8 @@ class FirebaseFunctions {
                 emailVerified: true,
             });
             yield this.setUserClaims(user.uid, user.email);
-            const token = yield this.admin.app.auth().createCustomToken(user.uid);
-            return { token };
+            // const token = await this.admin.app.auth().createCustomToken(user.uid);
+            return { user };
         });
     }
 }
