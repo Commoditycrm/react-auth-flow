@@ -43,12 +43,16 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseUserController = void 0;
 const routing_controllers_1 = require("routing-controllers");
 const sendgrid = __importStar(require("../email/sendgrid"));
 const env_loader_1 = require("../env/env.loader");
 const firebase_1 = require("../functions/firebase");
+const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 let FirebaseUserController = class FirebaseUserController {
     constructor() {
         this.emailService = sendgrid.EmailService.getInstance();
@@ -61,7 +65,7 @@ let FirebaseUserController = class FirebaseUserController {
             const verifyLink = yield firebase_1.FirebaseFunctions.getInstance().createUser({
                 email: email === null || email === void 0 ? void 0 : email.trim(),
                 password,
-                name
+                name,
             });
             const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
             const emailDetail = {
@@ -144,7 +148,13 @@ let FirebaseUserController = class FirebaseUserController {
             if (invitedUserExists) {
                 throw new Error('User already exists');
             }
-            const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?companyId=${companyId}&inviteeEmail=${inviteeEmail}`;
+            const token = jsonwebtoken_1.default.sign({
+                inviteeEmail,
+                orgId: companyId,
+                role: 'invitee',
+                sub: inviteeEmail,
+            }, process.env.INVITE_JWT_SECRET, { expiresIn: '1d' });
+            const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?token=${token}`;
             const emailDetail = {
                 to: inviteeEmail,
                 type: sendgrid.EmailType.INVITE_USER,
@@ -154,7 +164,7 @@ let FirebaseUserController = class FirebaseUserController {
             };
             yield this.emailService.sendEmail(emailDetail);
             // logger.info(`Email sent for: ${email}`);
-            return { success: true };
+            return { success: true, token };
         });
     }
     tagUser(taggedData) {
@@ -204,8 +214,8 @@ let FirebaseUserController = class FirebaseUserController {
             if (!email || !password || !name) {
                 throw new Error('Invalid Email or Password');
             }
-            const { token } = yield firebase_1.FirebaseFunctions.getInstance().createInvitedUser(user);
-            return { token };
+            const { user: userRecord } = yield firebase_1.FirebaseFunctions.getInstance().createInvitedUser(user);
+            return { user: userRecord };
         });
     }
 };

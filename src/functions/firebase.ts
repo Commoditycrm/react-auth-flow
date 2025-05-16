@@ -97,7 +97,7 @@ export class FirebaseFunctions {
     email: string;
     password: string;
     name: string;
-  }): Promise<{ token: string }> {
+  }): Promise<{ user: UserRecord }> {
     const user = await this.admin.app.auth().createUser({
       email: userInput?.email,
       password: userInput?.password,
@@ -105,7 +105,7 @@ export class FirebaseFunctions {
       emailVerified: true,
     });
     await this.setUserClaims(user.uid, user.email);
-    const token = await this.admin.app.auth().createCustomToken(user.uid);
-    return { token };
+    // const token = await this.admin.app.auth().createCustomToken(user.uid);
+    return { user };
   }
 }
