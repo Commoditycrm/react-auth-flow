@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseAdmin = exports.FirebaseConfig = void 0;
 const firebase_admin_1 = __importDefault(require("firebase-admin"));
 const env_loader_1 = require("../env/env.loader");
+const logger_1 = __importDefault(require("../logger"));
 var FirebaseConfig;
 (function (FirebaseConfig) {
     FirebaseConfig["FIREBASE_API_KEY"] = "FIREBASE_API_KEY";
@@ -35,7 +36,7 @@ class FirebaseAdmin {
                 this.app = firebase_admin_1.default.apps[0];
             }
             catch (err) {
-                //   logger.error(`Failed to init admin firebase: ${err}`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to init admin firebase: ${err}`);
                 throw err;
             }
         };

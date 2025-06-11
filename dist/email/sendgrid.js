@@ -12,17 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectEmailService = exports.EmailService = exports.EmailType = void 0;
+exports.ProjectEmailService = exports.EmailService = void 0;
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const env_loader_1 = require("../env/env.loader");
-var EmailType;
-(function (EmailType) {
-    EmailType["FIREBASE_VERIFY"] = "FIREBASE_VERIFY";
-    EmailType["PASSWORD_RESET"] = "PASSWORD_RESET";
-    EmailType["INVITE_USER"] = "INVITE_USER";
-    EmailType["TAGGING_USER"] = "TAGGING_USER";
-    EmailType["ASSIGN_USER_IN_WORK_ITEM"] = "ASSIGN_USER_IN_WORK_ITEM";
-})(EmailType || (exports.EmailType = EmailType = {}));
+const logger_1 = __importDefault(require("../logger"));
 class EmailService {
     constructor() {
         this.apiKey = env_loader_1.EnvLoader.getOrThrow('SENDGRID_KEY');
@@ -46,7 +39,7 @@ class EmailService {
                 return true;
             }
             catch (e) {
-                //   logger.error(`Error While sending email ${e}`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Error While sending email ${e}`);
             }
             return false;
         });
@@ -88,9 +81,14 @@ class ProjectEmailService {
                 return true;
             }
             catch (error) {
-                //   logger.error(`Error While sending email ${e}`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Error While sending email ${error}`);
             }
             return false;
+        });
+    }
+    removeUserFromProject() {
+        return __awaiter(this, void 0, void 0, function* () {
+            return true;
         });
     }
     static getInstance() {

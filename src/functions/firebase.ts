@@ -2,9 +2,9 @@ import { UserRecord } from 'firebase-admin/auth';
 import { FirebaseAdmin } from './admin';
 import { ActionCodeSettings, User } from 'firebase/auth';
 import { EnvLoader } from '../env/env.loader';
+import logger from '../logger';
 
 export class FirebaseFunctions {
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   admin: FirebaseAdmin = FirebaseAdmin.getInstance();
 
   static instance: FirebaseFunctions;
@@ -15,7 +15,7 @@ export class FirebaseFunctions {
 
   private isCompanyEmail(email: string) {
     if (!email) return false;
-    return email.endsWith('@agilenaustics.com');
+    return email.endsWith('@agilenautics.com');
   }
 
   private getRoleByEmail(email: string): string[] {
@@ -47,7 +47,7 @@ export class FirebaseFunctions {
 
     const verifyLink = await this.generateVerificationLink(userInput.email);
 
-    // logger.debug(`verifyLink: ${verifyLink}`);
+    logger?.debug(`verifyLink: ${verifyLink}`);
 
     return verifyLink;
   }
@@ -67,9 +67,7 @@ export class FirebaseFunctions {
     const passwordResetLink = await this.admin.app
       .auth()
       .generatePasswordResetLink(email, actionCodeSettings);
-
-    // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
-
+    logger?.debug(`Password-Reset Link: ${passwordResetLink}`);
     return passwordResetLink;
   }
 

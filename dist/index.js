@@ -1,9 +1,13 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const main_1 = require("./controllers/main");
+const projectController_1 = __importDefault(require("./controllers/projectController"));
 const base_server_1 = require("./server/base.server");
 // Initialize server with controllers
-const app = base_server_1.BaseServer.init([main_1.FirebaseUserController], '/api');
+const app = base_server_1.BaseServer.init([main_1.FirebaseUserController, projectController_1.default], '/api');
 //TODO: setup logger, setup error handler
 // Start server
 const server = base_server_1.BaseServer.start(app, 4000);

@@ -1,30 +1,7 @@
 import SendGridClient from '@sendgrid/mail';
 import { EnvLoader } from '../env/env.loader';
-
-export enum EmailType {
-  FIREBASE_VERIFY = 'FIREBASE_VERIFY',
-  PASSWORD_RESET = 'PASSWORD_RESET',
-  INVITE_USER = 'INVITE_USER',
-  TAGGING_USER = 'TAGGING_USER',
-  ASSIGN_USER_IN_WORK_ITEM = 'ASSIGN_USER_IN_WORK_ITEM',
-}
-
-export interface EmailDetail {
-  to: string;
-  type: EmailType;
-  message: Record<string, string>;
-}
-
-export interface UserTaggedDetail extends EmailDetail {
-  userDetail: Array<{ email: string; name: string }>;
-  user_name: string;
-  mentioner_name: string;
-  item_name: string;
-  mention_url: string;
-  email: string;
-  item_type: string;
-  item_uid: number;
-}
+import logger from '../logger';
+import { EmailDetail, UserTaggedDetail } from '../interfaces';
 
 export class EmailService {
   static instance: EmailService;
@@ -50,7 +27,7 @@ export class EmailService {
       // TODO: Retry mechanism
       return true;
     } catch (e: any) {
-      //   logger.error(`Error While sending email ${e}`);
+      logger?.error(`Error While sending email ${e}`);
     }
     return false;
   }
@@ -91,9 +68,13 @@ export class ProjectEmailService {
       await SendGridClient.send(sendgridMessage);
       return true;
     } catch (error: any) {
-      //   logger.error(`Error While sending email ${e}`);
+      logger?.error(`Error While sending email ${error}`);
     }
     return false;
+  }
+
+  async removeUserFromProject(): Promise<boolean> {
+    return true;
   }
 
   static getInstance() {

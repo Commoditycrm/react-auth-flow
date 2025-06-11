@@ -4,6 +4,8 @@ import morgan from 'morgan';
 import 'reflect-metadata';
 import { createExpressServer } from 'routing-controllers';
 import { isProduction } from '../env/detector';
+import { CustomErrorHandler } from '../error/error.handler';
+import logger from '../logger';
 
 export const BaseServer = {
   init: (controllers: Array<Function>, routePrefix: string = '') => {
@@ -12,7 +14,7 @@ export const BaseServer = {
       // cors: {
       //   origin: '*',
       // },
-      // middlewares: [CustomErrorHandler],
+      middlewares: [CustomErrorHandler],
       routePrefix,
     });
 
@@ -48,7 +50,7 @@ export const BaseServer = {
   start: (app: Express, port: number = 4000) => {
     if (!process.env.isVercel) {
       app.listen(port, () => {
-        console.log(
+        logger?.info(
           `⚡️[server]: Server is running at http://localhost:${port}`,
         );
       });
