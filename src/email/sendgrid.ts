@@ -1,7 +1,13 @@
 import SendGridClient, { MailDataRequired } from '@sendgrid/mail';
 import { EnvLoader } from '../env/env.loader';
 import logger from '../logger';
-import { EmailDetail, RemoveUserProps, UserTaggedDetail } from '../interfaces';
+import {
+  DeactivateOrgType,
+  DeleteOrgSendEmailProps,
+  EmailDetail,
+  RemoveUserProps,
+  UserTaggedDetail,
+} from '../interfaces';
 
 export class EmailService {
   static instance: EmailService;
@@ -30,6 +36,60 @@ export class EmailService {
       logger?.error(`Error While sending email ${e}`);
     }
     return false;
+  }
+
+  async orgDeactivationEmail(
+    emailDetail: DeactivateOrgType,
+  ): Promise<boolean> {
+    const { orgName, type, userEmail, userName, supportEmail } = emailDetail;
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: EmailService.instance.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        userName,
+        orgName,
+        supportEmail,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(
+        `Deactivation email sent successfully to ${userEmail} for organization ${orgName}`,
+      );
+      return true;
+    } catch (error) {
+      logger?.error(
+        `Failed to send deactivation email to ${userEmail} for organization  ${orgName}: ${error} `,
+      );
+      throw new Error(`While deactivating the org ${error}`);
+    }
+  }
+
+  async deleteOrgEmail(params: DeleteOrgSendEmailProps): Promise<boolean> {
+    const { orgName, supportEmail, type, userEmail, userName } = params;
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: this.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        orgName,
+        userName,
+        supportEmail,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(
+        `Deleting Org email sent successfully to ${userEmail} for organization ${orgName}`,
+      );
+      return true;
+    } catch (error) {
+      logger?.error(
+        `Failed to send delete org email to ${userEmail} for organization  ${orgName}:${error}`,
+      );
+      throw new Error(`While sending email for deleting org`);
+    }
   }
 
   //Project removal email

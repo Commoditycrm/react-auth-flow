@@ -44,6 +44,54 @@ class EmailService {
             return false;
         });
     }
+    orgDeactivationEmail(emailDetail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, type, userEmail, userName, supportEmail } = emailDetail;
+            const sendgridMessage = {
+                to: userEmail,
+                from: EmailService.instance.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    userName,
+                    orgName,
+                    supportEmail,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Deactivation email sent successfully to ${userEmail} for organization ${orgName}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send deactivation email to ${userEmail} for organization  ${orgName}: ${error} `);
+                throw new Error(`While deactivating the org ${error}`);
+            }
+        });
+    }
+    deleteOrgEmail(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, supportEmail, type, userEmail, userName } = params;
+            const sendgridMessage = {
+                to: userEmail,
+                from: this.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    orgName,
+                    userName,
+                    supportEmail,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Deleting Org email sent successfully to ${userEmail} for organization ${orgName}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send delete org email to ${userEmail} for organization  ${orgName}:${error}`);
+                throw new Error(`While sending email for deleting org`);
+            }
+        });
+    }
     //Project removal email
     removeUserFromProject(removeserPops) {
         return __awaiter(this, void 0, void 0, function* () {

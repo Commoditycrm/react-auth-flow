@@ -9,4 +9,6 @@ var EmailType;
     EmailType["TAGGING_USER"] = "TAGGING_USER";
     EmailType["ASSIGN_USER_IN_WORK_ITEM"] = "ASSIGN_USER_IN_WORK_ITEM";
     EmailType["REMOVE_USER_FROM_PROJECT"] = "REMOVE_USER_FROM_PROJECT";
+    EmailType["DEACTIVATE_ORG"] = "DEACTIVATE_ORG";
+    EmailType["DELETE_ORG"] = "DELETE_ORG";
 })(EmailType || (exports.EmailType = EmailType = {}));
