@@ -31,6 +31,9 @@ var __importStar = (this && this.__importStar) || function (mod) {
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -40,24 +43,34 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 const routing_controllers_1 = require("routing-controllers");
 const sendgrid = __importStar(require("../email/sendgrid"));
+const interfaces_1 = require("../interfaces");
+const logger_1 = __importDefault(require("../logger"));
 let ProjectController = class ProjectController {
     constructor() {
         this.emailService = sendgrid.EmailService.getInstance();
     }
-    removeUserFromProject(_a) {
-        return __awaiter(this, arguments, void 0, function* ({ projectName, orgName, userEmail, userName, }) {
-            if (!projectName || !orgName || !userEmail || !userName) {
-                throw new Error('Input Validation Error');
+    removeUserFromProject(removeserPops) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, projectName, userEmail, userName } = removeserPops;
+            if (!orgName || !projectName || !userEmail || !userName) {
+                throw Error('Input Validation Error');
             }
-            return true;
+            const sendEmailProps = Object.assign(Object.assign({}, removeserPops), { type: interfaces_1.EmailType.REMOVE_USER_FROM_PROJECT });
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info('Processing removing');
+            yield this.emailService.removeUserFromProject(sendEmailProps);
+            return { success: true };
         });
     }
 };
 __decorate([
     (0, routing_controllers_1.Post)('/remove_user'),
+    __param(0, (0, routing_controllers_1.Body)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)

@@ -16,9 +16,7 @@ exports.BaseServer = {
         var _a;
         const app = (0, routing_controllers_1.createExpressServer)({
             controllers,
-            // cors: {
-            //   origin: '*',
-            // },
+            cors: true,
             middlewares: [error_handler_1.CustomErrorHandler],
             routePrefix,
         });

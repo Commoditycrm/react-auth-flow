@@ -1,30 +1,35 @@
-import { JsonController, Post } from 'routing-controllers';
+import { Body, JsonController, Post } from 'routing-controllers';
 import * as sendgrid from '../email/sendgrid';
+import {
+  EmailType,
+  RemoveUserProps,
+  type RemoveUserBodyType,
+} from '../interfaces';
+import logger from '../logger';
 
 @JsonController('/project')
 class ProjectController {
   emailService: sendgrid.EmailService;
-  projectEmailService: sendgrid.ProjectEmailService;
 
   constructor() {
     this.emailService = sendgrid.EmailService.getInstance();
   }
   @Post('/remove_user')
-  async removeUserFromProject({
-    projectName,
-    orgName,
-    userEmail,
-    userName,
-  }: {
-    projectName: string;
-    orgName: string;
-    userEmail: string;
-    userName: string;
-  }): Promise<boolean> {
-    if (!projectName || !orgName || !userEmail || !userName) {
-      throw new Error('Input Validation Error');
+  async removeUserFromProject(
+    @Body() removeserPops: RemoveUserBodyType,
+  ): Promise<{ success: boolean }> {
+    const { orgName, projectName, userEmail, userName } = removeserPops;
+
+    if (!orgName || !projectName || !userEmail || !userName) {
+      throw Error('Input Validation Error');
     }
-    return true;
+    const sendEmailProps: RemoveUserProps = {
+      ...removeserPops,
+      type: EmailType.REMOVE_USER_FROM_PROJECT,
+    };
+    logger?.info('Processing removing');
+    await this.emailService.removeUserFromProject(sendEmailProps);
+    return { success: true };
   }
 }
 

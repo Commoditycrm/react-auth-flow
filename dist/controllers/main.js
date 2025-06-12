@@ -165,7 +165,7 @@ let FirebaseUserController = class FirebaseUserController {
                 },
             };
             yield this.emailService.sendEmail(emailDetail);
-            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Email sent for: ${email}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Invited Email sent for: ${email}`);
             return { success: true, token };
         });
     }

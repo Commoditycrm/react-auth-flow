@@ -185,7 +185,7 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    logger?.info(`Email sent for: ${email}`);
+    logger?.info(`Invited Email sent for: ${email}`);
 
     return { success: true, token };
   }

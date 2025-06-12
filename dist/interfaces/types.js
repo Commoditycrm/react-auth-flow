@@ -8,4 +8,5 @@ var EmailType;
     EmailType["INVITE_USER"] = "INVITE_USER";
     EmailType["TAGGING_USER"] = "TAGGING_USER";
     EmailType["ASSIGN_USER_IN_WORK_ITEM"] = "ASSIGN_USER_IN_WORK_ITEM";
+    EmailType["REMOVE_USER_FROM_PROJECT"] = "REMOVE_USER_FROM_PROJECT";
 })(EmailType || (exports.EmailType = EmailType = {}));

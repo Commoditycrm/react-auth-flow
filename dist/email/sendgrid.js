@@ -44,6 +44,32 @@ class EmailService {
             return false;
         });
     }
+    //Project removal email
+    removeUserFromProject(removeserPops) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userEmail, userName, projectName, orgName, type } = removeserPops;
+            const sendgridMessage = {
+                to: userEmail,
+                from: this.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    userName,
+                    projectName,
+                    orgName,
+                },
+                subject: `You've been removed from ${projectName}`,
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Project removal email sent to ${userName}.`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send project removal email to ${userEmail} for project ${projectName}: ${error.message}`);
+                throw new Error(`Error sending removal email to ${userEmail} for project ${projectName}`);
+            }
+        });
+    }
     static getInstance() {
         if (!EmailService.instance) {
             EmailService.instance = new EmailService();
@@ -84,11 +110,6 @@ class ProjectEmailService {
                 logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Error While sending email ${error}`);
             }
             return false;
-        });
-    }
-    removeUserFromProject() {
-        return __awaiter(this, void 0, void 0, function* () {
-            return true;
         });
     }
     static getInstance() {

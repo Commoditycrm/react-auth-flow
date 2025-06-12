@@ -4,6 +4,7 @@ export enum EmailType {
   INVITE_USER = 'INVITE_USER',
   TAGGING_USER = 'TAGGING_USER',
   ASSIGN_USER_IN_WORK_ITEM = 'ASSIGN_USER_IN_WORK_ITEM',
+  REMOVE_USER_FROM_PROJECT = 'REMOVE_USER_FROM_PROJECT',
 }
 
 export interface EmailDetail {
@@ -21,4 +22,15 @@ export interface UserTaggedDetail extends EmailDetail {
   email: string;
   item_type: string;
   item_uid: number;
+}
+
+export type RemoveUserBodyType = {
+  userName: string;
+  orgName: string;
+  projectName: string;
+  userEmail: string;
+};
+
+export interface RemoveUserProps extends RemoveUserBodyType {
+  type: string;
 }

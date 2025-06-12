@@ -1,7 +1,7 @@
-import SendGridClient from '@sendgrid/mail';
+import SendGridClient, { MailDataRequired } from '@sendgrid/mail';
 import { EnvLoader } from '../env/env.loader';
 import logger from '../logger';
-import { EmailDetail, UserTaggedDetail } from '../interfaces';
+import { EmailDetail, RemoveUserProps, UserTaggedDetail } from '../interfaces';
 
 export class EmailService {
   static instance: EmailService;
@@ -30,6 +30,38 @@ export class EmailService {
       logger?.error(`Error While sending email ${e}`);
     }
     return false;
+  }
+
+  //Project removal email
+  async removeUserFromProject(
+    removeserPops: RemoveUserProps,
+  ): Promise<boolean> {
+    const { userEmail, userName, projectName, orgName, type } = removeserPops;
+
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: this.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        userName,
+        projectName,
+        orgName,
+      },
+      subject: `You've been removed from ${projectName}`,
+    };
+
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(`Project removal email sent to ${userName}.`);
+      return true;
+    } catch (error: any) {
+      logger?.error(
+        `Failed to send project removal email to ${userEmail} for project ${projectName}: ${error.message}`,
+      );
+      throw new Error(
+        `Error sending removal email to ${userEmail} for project ${projectName}`,
+      );
+    }
   }
 
   static getInstance() {
@@ -71,10 +103,6 @@ export class ProjectEmailService {
       logger?.error(`Error While sending email ${error}`);
     }
     return false;
-  }
-
-  async removeUserFromProject(): Promise<boolean> {
-    return true;
   }
 
   static getInstance() {
