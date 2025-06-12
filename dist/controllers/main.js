@@ -53,6 +53,8 @@ const sendgrid = __importStar(require("../email/sendgrid"));
 const env_loader_1 = require("../env/env.loader");
 const firebase_1 = require("../functions/firebase");
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
+const logger_1 = __importDefault(require("../logger"));
+const interfaces_1 = require("../interfaces");
 let FirebaseUserController = class FirebaseUserController {
     constructor() {
         this.emailService = sendgrid.EmailService.getInstance();
@@ -61,7 +63,7 @@ let FirebaseUserController = class FirebaseUserController {
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
             const { email, password, name } = user;
-            // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Processing request for : ${email}`);
             const verifyLink = yield firebase_1.FirebaseFunctions.getInstance().createUser({
                 email: email === null || email === void 0 ? void 0 : email.trim(),
                 password,
@@ -70,13 +72,13 @@ let FirebaseUserController = class FirebaseUserController {
             const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
             const emailDetail = {
                 to: email,
-                type: sendgrid.EmailType.FIREBASE_VERIFY,
+                type: interfaces_1.EmailType.FIREBASE_VERIFY,
                 message: {
                     verifyLink,
                 },
             };
             yield this.emailService.sendEmail(emailDetail);
-            // logger.info(`Email sent for: ${email}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Email sent for: ${email}`);
             return { success: true, link: verifyLink, expiresAt: expirationTime };
         });
     }
@@ -86,18 +88,18 @@ let FirebaseUserController = class FirebaseUserController {
             if (!email) {
                 throw new Error('Input Validation Error');
             }
-            // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Processing request for : ${email} with locale: ${link}`);
             const verifyLink = link ||
                 (yield firebase_1.FirebaseFunctions.getInstance().generateVerificationLink(email === null || email === void 0 ? void 0 : email.trim()));
             const emailDetail = {
                 to: email,
-                type: sendgrid.EmailType.FIREBASE_VERIFY,
+                type: interfaces_1.EmailType.FIREBASE_VERIFY,
                 message: {
                     verifyLink,
                 },
             };
             yield this.emailService.sendEmail(emailDetail);
-            // logger.info(`Email sent for: ${email}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Email sent for: ${email}`);
             return { success: true };
         });
     }
@@ -116,13 +118,13 @@ let FirebaseUserController = class FirebaseUserController {
             const resetPasswordLink = yield firebase_1.FirebaseFunctions.getInstance().resetPassword(email.trim(), actionCodeSettings);
             const emailDetail = {
                 to: email,
-                type: sendgrid.EmailType.PASSWORD_RESET,
+                type: interfaces_1.EmailType.PASSWORD_RESET,
                 message: {
                     resetPasswordLink,
                 },
             };
             yield this.emailService.sendEmail(emailDetail);
-            // logger.info(`Email sent for: ${email}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Email sent for: ${email}`);
             return { success: true };
         });
     }
@@ -157,13 +159,13 @@ let FirebaseUserController = class FirebaseUserController {
             const invitationLink = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/invite?token=${token}`;
             const emailDetail = {
                 to: inviteeEmail,
-                type: sendgrid.EmailType.INVITE_USER,
+                type: interfaces_1.EmailType.INVITE_USER,
                 message: {
                     invitationLink,
                 },
             };
             yield this.emailService.sendEmail(emailDetail);
-            // logger.info(`Email sent for: ${email}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Invited Email sent for: ${email}`);
             return { success: true, token };
         });
     }
@@ -180,7 +182,7 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
-            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: sendgrid.EmailType.TAGGING_USER, mention_url: url });
+            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.TAGGING_USER, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
                 throw new Error('Unauthorized Request!');
@@ -200,7 +202,7 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
-            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: sendgrid.EmailType.ASSIGN_USER_IN_WORK_ITEM, mention_url: url });
+            const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.ASSIGN_USER_IN_WORK_ITEM, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
                 throw new Error('Unauthorized Request!');

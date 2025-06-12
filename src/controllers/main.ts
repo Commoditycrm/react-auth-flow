@@ -4,6 +4,8 @@ import { EnvLoader } from '../env/env.loader';
 import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
 import jwt from 'jsonwebtoken';
+import logger from '../logger';
+import { EmailDetail, EmailType, type UserTaggedDetail } from '../interfaces';
 
 @JsonController('/users')
 export class FirebaseUserController {
@@ -27,7 +29,7 @@ export class FirebaseUserController {
   ) {
     const { email, password, name } = user;
 
-    // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+    logger?.info(`Processing request for : ${email}`);
 
     const verifyLink = await FirebaseFunctions.getInstance().createUser({
       email: email?.trim(),
@@ -36,9 +38,9 @@ export class FirebaseUserController {
     });
     const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
 
-    const emailDetail: sendgrid.EmailDetail = {
+    const emailDetail: EmailDetail = {
       to: email,
-      type: sendgrid.EmailType.FIREBASE_VERIFY,
+      type: EmailType.FIREBASE_VERIFY,
       message: {
         verifyLink,
       },
@@ -46,7 +48,7 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    // logger.info(`Email sent for: ${email}`);
+    logger?.info(`Email sent for: ${email}`);
     return { success: true, link: verifyLink, expiresAt: expirationTime };
   }
 
@@ -63,7 +65,7 @@ export class FirebaseUserController {
       throw new Error('Input Validation Error');
     }
 
-    // logger.info(`Processing request for : ${email} with locale: ${locale}`);
+    logger?.info(`Processing request for : ${email} with locale: ${link}`);
 
     const verifyLink =
       link ||
@@ -71,9 +73,9 @@ export class FirebaseUserController {
         email?.trim(),
       ));
 
-    const emailDetail: sendgrid.EmailDetail = {
+    const emailDetail: EmailDetail = {
       to: email,
-      type: sendgrid.EmailType.FIREBASE_VERIFY,
+      type: EmailType.FIREBASE_VERIFY,
       message: {
         verifyLink,
       },
@@ -81,7 +83,7 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    // logger.info(`Email sent for: ${email}`);
+    logger?.info(`Email sent for: ${email}`);
     return { success: true };
   }
 
@@ -107,9 +109,9 @@ export class FirebaseUserController {
         actionCodeSettings,
       );
 
-    const emailDetail: sendgrid.EmailDetail = {
+    const emailDetail: EmailDetail = {
       to: email,
-      type: sendgrid.EmailType.PASSWORD_RESET,
+      type: EmailType.PASSWORD_RESET,
       message: {
         resetPasswordLink,
       },
@@ -117,7 +119,7 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    // logger.info(`Email sent for: ${email}`);
+    logger?.info(`Email sent for: ${email}`);
 
     return { success: true };
   }
@@ -173,9 +175,9 @@ export class FirebaseUserController {
       'BASE_URL',
     )}/invite?token=${token}`;
 
-    const emailDetail: sendgrid.EmailDetail = {
+    const emailDetail: EmailDetail = {
       to: inviteeEmail,
-      type: sendgrid.EmailType.INVITE_USER,
+      type: EmailType.INVITE_USER,
       message: {
         invitationLink,
       },
@@ -183,7 +185,7 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    // logger.info(`Email sent for: ${email}`);
+    logger?.info(`Invited Email sent for: ${email}`);
 
     return { success: true, token };
   }
@@ -191,7 +193,7 @@ export class FirebaseUserController {
   @Post('/tag_user')
   async tagUser(
     @Body()
-    taggedData: sendgrid.UserTaggedDetail,
+    taggedData: UserTaggedDetail,
   ) {
     const {
       mention_url,
@@ -215,9 +217,9 @@ export class FirebaseUserController {
     }
     const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
 
-    const useEmailDetail: sendgrid.UserTaggedDetail = {
+    const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
-      type: sendgrid.EmailType.TAGGING_USER,
+      type: EmailType.TAGGING_USER,
       mention_url: url,
     };
     const userExists = await FirebaseFunctions.getInstance().getUserByEmail(
@@ -231,7 +233,7 @@ export class FirebaseUserController {
 
   @Post('/assign') async assignUser(
     @Body()
-    taggedData: sendgrid.UserTaggedDetail,
+    taggedData: UserTaggedDetail,
   ) {
     const {
       mention_url,
@@ -256,9 +258,9 @@ export class FirebaseUserController {
 
     const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
 
-    const useEmailDetail: sendgrid.UserTaggedDetail = {
+    const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
-      type: sendgrid.EmailType.ASSIGN_USER_IN_WORK_ITEM,
+      type: EmailType.ASSIGN_USER_IN_WORK_ITEM,
       mention_url: url,
     };
     const userExists = await FirebaseFunctions.getInstance().getUserByEmail(

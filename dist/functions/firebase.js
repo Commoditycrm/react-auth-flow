@@ -8,20 +8,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FirebaseFunctions = void 0;
 const admin_1 = require("./admin");
 const env_loader_1 = require("../env/env.loader");
+const logger_1 = __importDefault(require("../logger"));
 class FirebaseFunctions {
     constructor() {
-        // eslint-disable-next-line @typescript-eslint/no-empty-function
         this.admin = admin_1.FirebaseAdmin.getInstance();
         this.admin = admin_1.FirebaseAdmin.getInstance();
     }
     isCompanyEmail(email) {
         if (!email)
             return false;
-        return email.endsWith('@agilenaustics.com');
+        return email.endsWith('@agilenautics.com');
     }
     getRoleByEmail(email) {
         if (this.isCompanyEmail(email)) {
@@ -44,7 +47,7 @@ class FirebaseFunctions {
             });
             yield this.setUserClaims(user.uid, user.email);
             const verifyLink = yield this.generateVerificationLink(userInput.email);
-            // logger.debug(`verifyLink: ${verifyLink}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.debug(`verifyLink: ${verifyLink}`);
             return verifyLink;
         });
     }
@@ -65,7 +68,7 @@ class FirebaseFunctions {
             const passwordResetLink = yield this.admin.app
                 .auth()
                 .generatePasswordResetLink(email, actionCodeSettings);
-            // logger.debug(`Password-Reset Link: ${passwordResetLink}`);
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.debug(`Password-Reset Link: ${passwordResetLink}`);
             return passwordResetLink;
         });
     }

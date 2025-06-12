@@ -1,8 +1,13 @@
 import { FirebaseUserController } from './controllers/main';
+import OrganizationController from './controllers/organizationController';
+import ProjectController from './controllers/projectController';
 import { BaseServer } from './server/base.server';
 
 // Initialize server with controllers
-const app = BaseServer.init([FirebaseUserController], '/api');
+const app = BaseServer.init(
+  [FirebaseUserController, ProjectController, OrganizationController],
+  '/api',
+);
 
 //TODO: setup logger, setup error handler
 // Start server

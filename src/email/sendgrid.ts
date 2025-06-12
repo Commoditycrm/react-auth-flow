@@ -1,30 +1,13 @@
-import SendGridClient from '@sendgrid/mail';
+import SendGridClient, { MailDataRequired } from '@sendgrid/mail';
 import { EnvLoader } from '../env/env.loader';
-
-export enum EmailType {
-  FIREBASE_VERIFY = 'FIREBASE_VERIFY',
-  PASSWORD_RESET = 'PASSWORD_RESET',
-  INVITE_USER = 'INVITE_USER',
-  TAGGING_USER = 'TAGGING_USER',
-  ASSIGN_USER_IN_WORK_ITEM = 'ASSIGN_USER_IN_WORK_ITEM',
-}
-
-export interface EmailDetail {
-  to: string;
-  type: EmailType;
-  message: Record<string, string>;
-}
-
-export interface UserTaggedDetail extends EmailDetail {
-  userDetail: Array<{ email: string; name: string }>;
-  user_name: string;
-  mentioner_name: string;
-  item_name: string;
-  mention_url: string;
-  email: string;
-  item_type: string;
-  item_uid: number;
-}
+import logger from '../logger';
+import {
+  DeactivateOrgType,
+  DeleteOrgSendEmailProps,
+  EmailDetail,
+  RemoveUserProps,
+  UserTaggedDetail,
+} from '../interfaces';
 
 export class EmailService {
   static instance: EmailService;
@@ -50,9 +33,95 @@ export class EmailService {
       // TODO: Retry mechanism
       return true;
     } catch (e: any) {
-      //   logger.error(`Error While sending email ${e}`);
+      logger?.error(`Error While sending email ${e}`);
     }
     return false;
+  }
+
+  async orgDeactivationEmail(
+    emailDetail: DeactivateOrgType,
+  ): Promise<boolean> {
+    const { orgName, type, userEmail, userName, supportEmail } = emailDetail;
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: EmailService.instance.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        userName,
+        orgName,
+        supportEmail,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(
+        `Deactivation email sent successfully to ${userEmail} for organization ${orgName}`,
+      );
+      return true;
+    } catch (error) {
+      logger?.error(
+        `Failed to send deactivation email to ${userEmail} for organization  ${orgName}: ${error} `,
+      );
+      throw new Error(`While deactivating the org ${error}`);
+    }
+  }
+
+  async deleteOrgEmail(params: DeleteOrgSendEmailProps): Promise<boolean> {
+    const { orgName, supportEmail, type, userEmail, userName } = params;
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: this.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        orgName,
+        userName,
+        supportEmail,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(
+        `Deleting Org email sent successfully to ${userEmail} for organization ${orgName}`,
+      );
+      return true;
+    } catch (error) {
+      logger?.error(
+        `Failed to send delete org email to ${userEmail} for organization  ${orgName}:${error}`,
+      );
+      throw new Error(`While sending email for deleting org`);
+    }
+  }
+
+  //Project removal email
+  async removeUserFromProject(
+    removeserPops: RemoveUserProps,
+  ): Promise<boolean> {
+    const { userEmail, userName, projectName, orgName, type } = removeserPops;
+
+    const sendgridMessage: MailDataRequired = {
+      to: userEmail,
+      from: this.from,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        userName,
+        projectName,
+        orgName,
+      },
+      subject: `You've been removed from ${projectName}`,
+    };
+
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(`Project removal email sent to ${userName}.`);
+      return true;
+    } catch (error: any) {
+      logger?.error(
+        `Failed to send project removal email to ${userEmail} for project ${projectName}: ${error.message}`,
+      );
+      throw new Error(
+        `Error sending removal email to ${userEmail} for project ${projectName}`,
+      );
+    }
   }
 
   static getInstance() {
@@ -91,7 +160,7 @@ export class ProjectEmailService {
       await SendGridClient.send(sendgridMessage);
       return true;
     } catch (error: any) {
-      //   logger.error(`Error While sending email ${e}`);
+      logger?.error(`Error While sending email ${error}`);
     }
     return false;
   }

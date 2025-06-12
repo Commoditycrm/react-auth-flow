@@ -12,17 +12,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectEmailService = exports.EmailService = exports.EmailType = void 0;
+exports.ProjectEmailService = exports.EmailService = void 0;
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const env_loader_1 = require("../env/env.loader");
-var EmailType;
-(function (EmailType) {
-    EmailType["FIREBASE_VERIFY"] = "FIREBASE_VERIFY";
-    EmailType["PASSWORD_RESET"] = "PASSWORD_RESET";
-    EmailType["INVITE_USER"] = "INVITE_USER";
-    EmailType["TAGGING_USER"] = "TAGGING_USER";
-    EmailType["ASSIGN_USER_IN_WORK_ITEM"] = "ASSIGN_USER_IN_WORK_ITEM";
-})(EmailType || (exports.EmailType = EmailType = {}));
+const logger_1 = __importDefault(require("../logger"));
 class EmailService {
     constructor() {
         this.apiKey = env_loader_1.EnvLoader.getOrThrow('SENDGRID_KEY');
@@ -46,9 +39,83 @@ class EmailService {
                 return true;
             }
             catch (e) {
-                //   logger.error(`Error While sending email ${e}`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Error While sending email ${e}`);
             }
             return false;
+        });
+    }
+    orgDeactivationEmail(emailDetail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, type, userEmail, userName, supportEmail } = emailDetail;
+            const sendgridMessage = {
+                to: userEmail,
+                from: EmailService.instance.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    userName,
+                    orgName,
+                    supportEmail,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Deactivation email sent successfully to ${userEmail} for organization ${orgName}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send deactivation email to ${userEmail} for organization  ${orgName}: ${error} `);
+                throw new Error(`While deactivating the org ${error}`);
+            }
+        });
+    }
+    deleteOrgEmail(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, supportEmail, type, userEmail, userName } = params;
+            const sendgridMessage = {
+                to: userEmail,
+                from: this.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    orgName,
+                    userName,
+                    supportEmail,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Deleting Org email sent successfully to ${userEmail} for organization ${orgName}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send delete org email to ${userEmail} for organization  ${orgName}:${error}`);
+                throw new Error(`While sending email for deleting org`);
+            }
+        });
+    }
+    //Project removal email
+    removeUserFromProject(removeserPops) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userEmail, userName, projectName, orgName, type } = removeserPops;
+            const sendgridMessage = {
+                to: userEmail,
+                from: this.from,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    userName,
+                    projectName,
+                    orgName,
+                },
+                subject: `You've been removed from ${projectName}`,
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Project removal email sent to ${userName}.`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Failed to send project removal email to ${userEmail} for project ${projectName}: ${error.message}`);
+                throw new Error(`Error sending removal email to ${userEmail} for project ${projectName}`);
+            }
         });
     }
     static getInstance() {
@@ -88,7 +155,7 @@ class ProjectEmailService {
                 return true;
             }
             catch (error) {
-                //   logger.error(`Error While sending email ${e}`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Error While sending email ${error}`);
             }
             return false;
         });

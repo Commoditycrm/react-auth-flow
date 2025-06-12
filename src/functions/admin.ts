@@ -1,6 +1,7 @@
 import admin, { app } from 'firebase-admin';
 import { ActionCodeSettings } from 'firebase/auth';
 import { EnvLoader } from '../env/env.loader';
+import logger from '../logger';
 
 export enum FirebaseConfig {
   FIREBASE_API_KEY = 'FIREBASE_API_KEY',
@@ -50,7 +51,7 @@ export class FirebaseAdmin {
       }
       this.app = admin.apps[0] as app.App;
     } catch (err) {
-      //   logger.error(`Failed to init admin firebase: ${err}`);
+      logger?.error(`Failed to init admin firebase: ${err}`);
       throw err;
     }
   };
