@@ -99,9 +99,8 @@ let OrganizationController = class OrganizationController {
             return { success: true };
         });
     }
-    getAttachmentStorage(params) {
+    getAttachmentStorage(orgId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { orgId } = params;
             if (!orgId || typeof orgId !== 'string') {
                 throw new Error('Invalid orgId.');
             }
@@ -158,9 +157,9 @@ __decorate([
 ], OrganizationController.prototype, "activeOrg", null);
 __decorate([
     (0, routing_controllers_1.Get)('/storage'),
-    __param(0, (0, routing_controllers_1.Body)()),
+    __param(0, (0, routing_controllers_1.QueryParam)('orgId')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [String]),
     __metadata("design:returntype", Promise)
 ], OrganizationController.prototype, "getAttachmentStorage", null);
 OrganizationController = __decorate([
