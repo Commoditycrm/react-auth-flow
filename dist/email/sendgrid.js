@@ -68,6 +68,30 @@ class EmailService {
             }
         });
     }
+    orgActivation(emailDetail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { dashboardLink, orgName, type, userEmail, userName } = emailDetail;
+            const sendgridMessage = {
+                from: EmailService.instance.from,
+                to: userEmail,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    userName,
+                    orgName,
+                    dashboardLink,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Activation email sent successfully to ${userEmail} for organization ${orgName}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`iled to activate Org:${error}`);
+                throw new Error(`Filed to activate Org:${error}`);
+            }
+        });
+    }
     deleteOrgEmail(params) {
         return __awaiter(this, void 0, void 0, function* () {
             const { orgName, supportEmail, type, userEmail, userName } = params;

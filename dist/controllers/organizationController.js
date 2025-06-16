@@ -52,10 +52,14 @@ const sendgrid = __importStar(require("../email/sendgrid"));
 const interfaces_1 = require("../interfaces");
 const env_loader_1 = require("../env/env.loader");
 const logger_1 = __importDefault(require("../logger"));
+const storage_1 = require("firebase-admin/storage");
+const admin_1 = require("../functions/admin");
 let OrganizationController = class OrganizationController {
     constructor() {
+        this.admin = admin_1.FirebaseAdmin.getInstance();
         this.supportEmail = env_loader_1.EnvLoader.get('SUPPORT_EMAIL');
         this.emailService = sendgrid.EmailService.getInstance();
+        this.admin = admin_1.FirebaseAdmin.getInstance();
     }
     deActivateOrg(deactivateProps) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -81,6 +85,55 @@ let OrganizationController = class OrganizationController {
             return { sussess: true };
         });
     }
+    activeOrg(props) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgName, userEmail, userName } = props;
+            if (!orgName || !userEmail || !userName) {
+                throw new Error('Input Validation Error');
+            }
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Actiavting Org email processing for ${userEmail}`);
+            const link = env_loader_1.EnvLoader.getOrThrow('BASE_URL') + `/my_projects?redirect=true`;
+            const sendEmailProps = Object.assign(Object.assign({}, props), { dashboardLink: link, type: interfaces_1.EmailType.ACTIVATE_ORG });
+            console.log(link);
+            yield this.emailService.orgActivation(sendEmailProps);
+            return { success: true };
+        });
+    }
+    getAttachmentStorage(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgId } = params;
+            if (!orgId || typeof orgId !== 'string') {
+                throw new Error('Invalid orgId.');
+            }
+            const bucket = (0, storage_1.getStorage)(this.admin.app).bucket();
+            const prefix = `attachments/org:${orgId}/`;
+            try {
+                const [files] = yield bucket.getFiles({ prefix });
+                if (!files.length) {
+                    return {
+                        orgId,
+                        fileCount: 0,
+                        totalBytes: 0,
+                        totalMB: '0.00',
+                    };
+                }
+                const totalBytes = files.reduce((sum, file) => {
+                    var _a;
+                    const size = Number((_a = file.metadata) === null || _a === void 0 ? void 0 : _a.size) || 0;
+                    return sum + size;
+                }, 0);
+                return {
+                    orgId,
+                    fileCount: files.length,
+                    totalBytes,
+                    totalMB: (totalBytes / (1024 * 1024)).toFixed(2),
+                };
+            }
+            catch (error) {
+                throw new Error(`Failed to fetch storage usage: ${error.message || error}`);
+            }
+        });
+    }
 };
 __decorate([
     (0, routing_controllers_1.Post)('/deactivate'),
@@ -96,6 +149,20 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrganizationController.prototype, "deleteOrg", null);
+__decorate([
+    (0, routing_controllers_1.Post)('/active'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationController.prototype, "activeOrg", null);
+__decorate([
+    (0, routing_controllers_1.Get)('/storage'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], OrganizationController.prototype, "getAttachmentStorage", null);
 OrganizationController = __decorate([
     (0, routing_controllers_1.JsonController)('/organizations'),
     __metadata("design:paramtypes", [])

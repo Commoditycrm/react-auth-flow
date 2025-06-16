@@ -22,10 +22,14 @@ var __importStar = (this && this.__importStar) || function (mod) {
     __setModuleDefault(result, mod);
     return result;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EnvLoader = void 0;
 const dotenv = __importStar(require("dotenv"));
 const detector_1 = require("./detector");
+const logger_1 = __importDefault(require("../logger"));
 exports.EnvLoader = {
     get: (variableName) => process.env[variableName],
     getOrThrow: (variableName) => {
@@ -47,7 +51,7 @@ exports.EnvLoader = {
     },
     load: () => {
         const config = (0, detector_1.getEnvFileName)();
-        console.log(`Loading env ${config}`);
+        logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Loading env ${config}`);
         dotenv.config({ path: config });
     },
     //
