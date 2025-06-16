@@ -1,4 +1,4 @@
-import { Body, Get, JsonController, Post, Req } from 'routing-controllers';
+import { Body, Get, JsonController, Post, QueryParam } from 'routing-controllers';
 import * as sendgrid from '../email/sendgrid';
 import {
   ActivationOrgEmailProps,
@@ -73,8 +73,7 @@ class OrganizationController {
   }
 
   @Get('/storage')
-  async getAttachmentStorage(@Body() params: { orgId: string }) {
-    const { orgId } = params;
+  async getAttachmentStorage( @QueryParam('orgId') orgId: string,) {
 
     if (!orgId || typeof orgId !== 'string') {
       throw new Error('Invalid orgId.');
