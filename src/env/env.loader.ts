@@ -1,5 +1,6 @@
 import * as dotenv from 'dotenv';
 import { getEnvFileName } from './detector';
+import logger from '../logger';
 
 export const EnvLoader = {
   get: (variableName: string) => process.env[variableName],
@@ -22,7 +23,7 @@ export const EnvLoader = {
   },
   load: () => {
     const config = getEnvFileName();
-    console.log(`Loading env ${config}`);
+    logger?.info(`Loading env ${config}`);
     dotenv.config({ path: config });
   },
   //

@@ -1,3 +1,30 @@
+export enum FirebaseConfig {
+  FIREBASE_API_KEY = 'FIREBASE_API_KEY',
+  FIREBASE_PRIVATE_KEY = 'FIREBASE_PRIVATE_KEY',
+  FIREBASE_AUTH_DOMAIN = 'FIREBASE_AUTH_DOMAIN',
+  FIREBASE_PROJECT_ID = 'FIREBASE_PROJECT_ID',
+  FIREBASE_MESSAGE_SENDER_ID = 'FIREBASE_MESSAGE_SENDER_ID',
+  FIREBASE_APP_ID = 'FIREBASE_APP_ID',
+  FIREBASE_MEASUREMENT_ID = 'FIREBASE_MEASUREMENT_ID',
+  FIREBASE_CLIENT_EMAIL = 'FIREBASE_CLIENT_EMAIL',
+  FIREBASE_DYNAMIC_LINK_DOMAIN = 'FIREBASE_DYNAMIC_LINK_DOMAIN',
+  FIREBASE_STORAGE_BUCKET = 'FIREBASE_STORAGE_BUCKET',
+  FIRBASE_STORAGE_PATH = 'FIRBASE_STORAGE_PATH',
+}
+
+export interface FirebaseUser {
+  readonly uid: string;
+  readonly name?: string;
+  readonly email?: string;
+  readonly emailVerified: boolean;
+  readonly phone?: string;
+  readonly photo?: string;
+  readonly signInProvider: string;
+  readonly claims?: {
+    [key: string]: unknown;
+  };
+}
+
 export enum EmailType {
   FIREBASE_VERIFY = 'FIREBASE_VERIFY',
   PASSWORD_RESET = 'PASSWORD_RESET',
@@ -7,6 +34,7 @@ export enum EmailType {
   REMOVE_USER_FROM_PROJECT = 'REMOVE_USER_FROM_PROJECT',
   DEACTIVATE_ORG = 'DEACTIVATE_ORG',
   DELETE_ORG = 'DELETE_ORG',
+  ACTIVATE_ORG = 'ACTIVATE_ORG',
 }
 
 export interface EmailDetail {
@@ -45,4 +73,17 @@ export type DeactivateOrgType = Omit<RemoveUserProps, 'projectName'> & {
 };
 export type DeleteOrgSendEmailProps = Omit<DeactivateOrgType, 'projectName'> & {
   supportEmail: string | undefined;
+};
+
+export type ActivationOrgType = Omit<
+  DeactivateOrgType,
+  'supportEmail' | 'type'
+> & {};
+
+export type ActivationOrgEmailProps = Omit<
+  ActivationOrgType,
+  'projectName' | 'supportEmail'
+> & {
+  dashboardLink: string;
+  type: string;
 };

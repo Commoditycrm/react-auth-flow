@@ -2,6 +2,7 @@ import SendGridClient, { MailDataRequired } from '@sendgrid/mail';
 import { EnvLoader } from '../env/env.loader';
 import logger from '../logger';
 import {
+  ActivationOrgEmailProps,
   DeactivateOrgType,
   DeleteOrgSendEmailProps,
   EmailDetail,
@@ -38,9 +39,7 @@ export class EmailService {
     return false;
   }
 
-  async orgDeactivationEmail(
-    emailDetail: DeactivateOrgType,
-  ): Promise<boolean> {
+  async orgDeactivationEmail(emailDetail: DeactivateOrgType): Promise<boolean> {
     const { orgName, type, userEmail, userName, supportEmail } = emailDetail;
     const sendgridMessage: MailDataRequired = {
       to: userEmail,
@@ -63,6 +62,30 @@ export class EmailService {
         `Failed to send deactivation email to ${userEmail} for organization  ${orgName}: ${error} `,
       );
       throw new Error(`While deactivating the org ${error}`);
+    }
+  }
+
+  async orgActivation(emailDetail: ActivationOrgEmailProps): Promise<boolean> {
+    const { dashboardLink, orgName, type, userEmail, userName } = emailDetail;
+    const sendgridMessage: MailDataRequired = {
+      from: EmailService.instance.from,
+      to: userEmail,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        userName,
+        orgName,
+        dashboardLink,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(
+        `Activation email sent successfully to ${userEmail} for organization ${orgName}`,
+      );
+      return true;
+    } catch (error) {
+      logger?.error(`iled to activate Org:${error}`);
+      throw new Error(`Filed to activate Org:${error}`);
     }
   }
 
