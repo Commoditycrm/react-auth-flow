@@ -12,7 +12,6 @@ export class FirebaseAdmin {
     privateKey: EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_PRIVATE_KEY),
     projectId: EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_PROJECT_ID),
     clientEmail: EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_CLIENT_EMAIL),
-    storageBucket: EnvLoader.getOrThrow(FirebaseConfig.FIREBASE_STORAGE_BUCKET),
   };
 
   actionCodeSettings: ActionCodeSettings | undefined;
@@ -24,7 +23,6 @@ export class FirebaseAdmin {
       if (!admin.apps.length) {
         this.app = admin.initializeApp({
           credential: admin.credential.cert(this.serviceAccount),
-          storageBucket: this.serviceAccount.storageBucket, 
         });
       }
       this.app = admin.apps[0] as app.App;

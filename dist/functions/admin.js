@@ -14,14 +14,12 @@ class FirebaseAdmin {
             privateKey: env_loader_1.EnvLoader.getOrThrow(interfaces_1.FirebaseConfig.FIREBASE_PRIVATE_KEY),
             projectId: env_loader_1.EnvLoader.getOrThrow(interfaces_1.FirebaseConfig.FIREBASE_PROJECT_ID),
             clientEmail: env_loader_1.EnvLoader.getOrThrow(interfaces_1.FirebaseConfig.FIREBASE_CLIENT_EMAIL),
-            storageBucket: env_loader_1.EnvLoader.getOrThrow(interfaces_1.FirebaseConfig.FIREBASE_STORAGE_BUCKET),
         };
         this.adminInitFirebase = () => {
             try {
                 if (!firebase_admin_1.default.apps.length) {
                     this.app = firebase_admin_1.default.initializeApp({
                         credential: firebase_admin_1.default.credential.cert(this.serviceAccount),
-                        storageBucket: this.serviceAccount.storageBucket,
                     });
                 }
                 this.app = firebase_admin_1.default.apps[0];

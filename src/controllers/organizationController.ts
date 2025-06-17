@@ -72,45 +72,6 @@ class OrganizationController {
     return { success: true };
   }
 
-  @Get('/storage')
-  async getAttachmentStorage( @QueryParam('orgId') orgId: string,) {
-
-    if (!orgId || typeof orgId !== 'string') {
-      throw new Error('Invalid orgId.');
-    }
-
-    const bucket = getStorage(this.admin.app).bucket();
-    const prefix = `attachments/org:${orgId}/`;
-
-    try {
-      const [files] = await bucket.getFiles({ prefix });
-
-      if (!files.length) {
-        return {
-          orgId,
-          fileCount: 0,
-          totalBytes: 0,
-          totalMB: '0.00',
-        };
-      }
-
-      const totalBytes = files.reduce((sum, file) => {
-        const size = Number(file.metadata?.size) || 0;
-        return sum + size;
-      }, 0);
-
-      return {
-        orgId,
-        fileCount: files.length,
-        totalBytes,
-        totalMB: (totalBytes / (1024 * 1024)).toFixed(2),
-      };
-    } catch (error: any) {
-      throw new Error(
-        `Failed to fetch storage usage: ${error.message || error}`,
-      );
-    }
-  }
 }
 
 export default OrganizationController;

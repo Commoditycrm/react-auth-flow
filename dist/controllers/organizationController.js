@@ -52,7 +52,6 @@ const sendgrid = __importStar(require("../email/sendgrid"));
 const interfaces_1 = require("../interfaces");
 const env_loader_1 = require("../env/env.loader");
 const logger_1 = __importDefault(require("../logger"));
-const storage_1 = require("firebase-admin/storage");
 const admin_1 = require("../functions/admin");
 let OrganizationController = class OrganizationController {
     constructor() {
@@ -99,40 +98,6 @@ let OrganizationController = class OrganizationController {
             return { success: true };
         });
     }
-    getAttachmentStorage(orgId) {
-        return __awaiter(this, void 0, void 0, function* () {
-            if (!orgId || typeof orgId !== 'string') {
-                throw new Error('Invalid orgId.');
-            }
-            const bucket = (0, storage_1.getStorage)(this.admin.app).bucket();
-            const prefix = `attachments/org:${orgId}/`;
-            try {
-                const [files] = yield bucket.getFiles({ prefix });
-                if (!files.length) {
-                    return {
-                        orgId,
-                        fileCount: 0,
-                        totalBytes: 0,
-                        totalMB: '0.00',
-                    };
-                }
-                const totalBytes = files.reduce((sum, file) => {
-                    var _a;
-                    const size = Number((_a = file.metadata) === null || _a === void 0 ? void 0 : _a.size) || 0;
-                    return sum + size;
-                }, 0);
-                return {
-                    orgId,
-                    fileCount: files.length,
-                    totalBytes,
-                    totalMB: (totalBytes / (1024 * 1024)).toFixed(2),
-                };
-            }
-            catch (error) {
-                throw new Error(`Failed to fetch storage usage: ${error.message || error}`);
-            }
-        });
-    }
 };
 __decorate([
     (0, routing_controllers_1.Post)('/deactivate'),
@@ -155,13 +120,6 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], OrganizationController.prototype, "activeOrg", null);
-__decorate([
-    (0, routing_controllers_1.Get)('/storage'),
-    __param(0, (0, routing_controllers_1.QueryParam)('orgId')),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
-    __metadata("design:returntype", Promise)
-], OrganizationController.prototype, "getAttachmentStorage", null);
 OrganizationController = __decorate([
     (0, routing_controllers_1.JsonController)('/organizations'),
     __metadata("design:paramtypes", [])
