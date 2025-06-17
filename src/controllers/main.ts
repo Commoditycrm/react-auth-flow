@@ -5,7 +5,13 @@ import { FirebaseFunctions } from '../functions/firebase';
 import { ActionCodeSettings } from 'firebase/auth';
 import jwt from 'jsonwebtoken';
 import logger from '../logger';
-import { EmailDetail, EmailType, type UserTaggedDetail } from '../interfaces';
+import {
+  EmailDetail,
+  EmailType,
+  RemindersEmailProps,
+  type RemindersType,
+  type UserTaggedDetail,
+} from '../interfaces';
 
 @JsonController('/users')
 export class FirebaseUserController {
@@ -289,5 +295,23 @@ export class FirebaseUserController {
     const { user: userRecord } =
       await FirebaseFunctions.getInstance().createInvitedUser(user);
     return { user: userRecord };
+  }
+
+  @Post('/reminders') async name(@Body() params: RemindersType) {
+    const { userEmail, userName, taskCount } = params;
+    if (!userEmail || !userName || !taskCount) {
+      throw new Error('Input Validation Field.');
+    }
+    logger?.info(`✅Processing Reminder email  to user: ${userEmail}`);
+    const link =
+      EnvLoader.getOrThrow('BASE_URL') + `/my_projects?redirect=true`;
+    const sendEmailData: RemindersEmailProps = {
+      ...params,
+      dashboardLink: link,
+      plural: taskCount > 1 ? 's' : '',
+      type: EmailType.REMINDER,
+    };
+    await this.emailService.reminders(sendEmailData);
+    return { success: true };
   }
 }

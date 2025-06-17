@@ -6,6 +6,7 @@ import {
   DeactivateOrgType,
   DeleteOrgSendEmailProps,
   EmailDetail,
+  RemindersEmailProps,
   RemoveUserProps,
   UserTaggedDetail,
 } from '../interfaces';
@@ -144,6 +145,28 @@ export class EmailService {
       throw new Error(
         `Error sending removal email to ${userEmail} for project ${projectName}`,
       );
+    }
+  }
+
+  async reminders(emailProps: RemindersEmailProps): Promise<boolean> {
+    const { dashboardLink, taskCount, type, userEmail, userName } = emailProps;
+    const sendgridMessage: MailDataRequired = {
+      from: this.from,
+      to: userEmail,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        dashboardLink,
+        taskCount,
+        userName,
+      },
+    };
+    try {
+      await SendGridClient.send(sendgridMessage);
+      logger?.info(`✅ Reminder email sent successfully to user: ${userEmail}`);
+      return true;
+    } catch (error) {
+      logger?.error(`While sending reminder:${error}`);
+      throw new Error(`Field to send reminder`);
     }
   }
 

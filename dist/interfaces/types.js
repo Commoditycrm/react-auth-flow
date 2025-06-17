@@ -24,4 +24,5 @@ var EmailType;
     EmailType["DEACTIVATE_ORG"] = "DEACTIVATE_ORG";
     EmailType["DELETE_ORG"] = "DELETE_ORG";
     EmailType["ACTIVATE_ORG"] = "ACTIVATE_ORG";
+    EmailType["REMINDER"] = "REMINDER";
 })(EmailType || (exports.EmailType = EmailType = {}));
