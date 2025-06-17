@@ -33,6 +33,7 @@ export enum EmailType {
   DEACTIVATE_ORG = 'DEACTIVATE_ORG',
   DELETE_ORG = 'DELETE_ORG',
   ACTIVATE_ORG = 'ACTIVATE_ORG',
+  REMINDER = 'REMINDER',
 }
 
 export interface EmailDetail {
@@ -84,4 +85,11 @@ export type ActivationOrgEmailProps = Omit<
 > & {
   dashboardLink: string;
   type: string;
+};
+export type RemindersType = Omit<ActivationOrgType, 'orgName' | ''> & {
+  taskCount: number;
+};
+export type RemindersEmailProps = Omit<ActivationOrgEmailProps, 'orgName'> & {
+  taskCount: number;
+  plural: string;
 };

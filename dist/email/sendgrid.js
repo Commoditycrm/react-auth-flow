@@ -142,6 +142,30 @@ class EmailService {
             }
         });
     }
+    reminders(emailProps) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { dashboardLink, taskCount, type, userEmail, userName } = emailProps;
+            const sendgridMessage = {
+                from: this.from,
+                to: userEmail,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: {
+                    dashboardLink,
+                    taskCount,
+                    userName,
+                },
+            };
+            try {
+                yield mail_1.default.send(sendgridMessage);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`✅ Reminder email sent successfully to user: ${userEmail}`);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`While sending reminder:${error}`);
+                throw new Error(`Field to send reminder`);
+            }
+        });
+    }
     static getInstance() {
         if (!EmailService.instance) {
             EmailService.instance = new EmailService();

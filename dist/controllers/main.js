@@ -220,6 +220,19 @@ let FirebaseUserController = class FirebaseUserController {
             return { user: userRecord };
         });
     }
+    name(params) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { userEmail, userName, taskCount } = params;
+            if (!userEmail || !userName || !taskCount) {
+                throw new Error('Input Validation Field.');
+            }
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`✅Processing Reminder email  to user: ${userEmail}`);
+            const link = env_loader_1.EnvLoader.getOrThrow('BASE_URL') + `/my_projects?redirect=true`;
+            const sendEmailData = Object.assign(Object.assign({}, params), { dashboardLink: link, plural: taskCount > 1 ? 's' : '', type: interfaces_1.EmailType.REMINDER });
+            yield this.emailService.reminders(sendEmailData);
+            return { success: true };
+        });
+    }
 };
 exports.FirebaseUserController = FirebaseUserController;
 __decorate([
@@ -271,6 +284,13 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], FirebaseUserController.prototype, "finishSignUp", null);
+__decorate([
+    (0, routing_controllers_1.Post)('/reminders'),
+    __param(0, (0, routing_controllers_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], FirebaseUserController.prototype, "name", null);
 exports.FirebaseUserController = FirebaseUserController = __decorate([
     (0, routing_controllers_1.JsonController)('/users'),
     __metadata("design:paramtypes", [])
