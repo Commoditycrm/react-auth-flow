@@ -12,8 +12,6 @@ var FirebaseConfig;
     FirebaseConfig["FIREBASE_MEASUREMENT_ID"] = "FIREBASE_MEASUREMENT_ID";
     FirebaseConfig["FIREBASE_CLIENT_EMAIL"] = "FIREBASE_CLIENT_EMAIL";
     FirebaseConfig["FIREBASE_DYNAMIC_LINK_DOMAIN"] = "FIREBASE_DYNAMIC_LINK_DOMAIN";
-    FirebaseConfig["FIREBASE_STORAGE_BUCKET"] = "FIREBASE_STORAGE_BUCKET";
-    FirebaseConfig["FIRBASE_STORAGE_PATH"] = "FIRBASE_STORAGE_PATH";
 })(FirebaseConfig || (exports.FirebaseConfig = FirebaseConfig = {}));
 var EmailType;
 (function (EmailType) {
