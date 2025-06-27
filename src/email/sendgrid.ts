@@ -136,7 +136,7 @@ export class EmailService {
 
     try {
       await SendGridClient.send(sendgridMessage);
-      logger?.info(`Project removal email sent to ${userName}.`);
+      logger?.info(`Project removal email sent to ${userEmail}.`);
       return true;
     } catch (error: any) {
       logger?.error(

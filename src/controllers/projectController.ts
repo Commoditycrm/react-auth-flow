@@ -27,7 +27,7 @@ class ProjectController {
       ...removeserPops,
       type: EmailType.REMOVE_USER_FROM_PROJECT,
     };
-    logger?.info('Processing removing');
+    logger?.info(`Processing removing user from project to:${userEmail}`);
     await this.emailService.removeUserFromProject(sendEmailProps);
     return { success: true };
   }

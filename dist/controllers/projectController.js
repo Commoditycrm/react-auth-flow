@@ -62,7 +62,7 @@ let ProjectController = class ProjectController {
                 throw Error('Input Validation Error');
             }
             const sendEmailProps = Object.assign(Object.assign({}, removeserPops), { type: interfaces_1.EmailType.REMOVE_USER_FROM_PROJECT });
-            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info('Processing removing');
+            logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Processing removing user from project to:${userEmail}`);
             yield this.emailService.removeUserFromProject(sendEmailProps);
             return { success: true };
         });

@@ -221,7 +221,7 @@ export class FirebaseUserController {
     ) {
       throw new Error('Input Validation Error');
     }
-    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
 
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
@@ -262,7 +262,7 @@ export class FirebaseUserController {
       throw new Error('Input Validation Error');
     }
 
-    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
 
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
