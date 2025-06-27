@@ -5,10 +5,14 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CustomErrorHandler = void 0;
 const routing_controllers_1 = require("routing-controllers");
 const error_codes_1 = require("./error.codes");
+const logger_1 = __importDefault(require("../logger"));
 let CustomErrorHandler = class CustomErrorHandler {
     error(err, req, res) {
         if ((err === null || err === void 0 ? void 0 : err.code) && error_codes_1.FIREBASE_ERROR_CODES[err.code]) {
@@ -19,7 +23,7 @@ let CustomErrorHandler = class CustomErrorHandler {
                 message: specificErrorMessage,
             });
         }
-        // logger.error(`Execution failed: ${err}`);
+        logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Execution failed: ${err}`);
         const errorMessage = error_codes_1.ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
         return res.status(500).json({
             code: 'INTERNAL_SERVER_ERROR',
