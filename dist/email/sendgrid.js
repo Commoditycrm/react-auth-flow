@@ -133,7 +133,7 @@ class EmailService {
             };
             try {
                 yield mail_1.default.send(sendgridMessage);
-                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Project removal email sent to ${userName}.`);
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Project removal email sent to ${userEmail}.`);
                 return true;
             }
             catch (error) {

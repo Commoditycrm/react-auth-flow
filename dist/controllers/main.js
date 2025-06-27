@@ -181,7 +181,7 @@ let FirebaseUserController = class FirebaseUserController {
                 !item_type) {
                 throw new Error('Input Validation Error');
             }
-            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
             const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.TAGGING_USER, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
@@ -201,7 +201,7 @@ let FirebaseUserController = class FirebaseUserController {
                 !item_type) {
                 throw new Error('Input Validation Error');
             }
-            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}`;
+            const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
             const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.ASSIGN_USER_IN_WORK_ITEM, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)

@@ -5,6 +5,7 @@ import {
   Middleware,
 } from 'routing-controllers';
 import { ERROR_MESSAGES, FIREBASE_ERROR_CODES } from './error.codes';
+import logger from '../logger';
 
 @Middleware({ type: 'after', priority: 100 })
 export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
@@ -19,7 +20,7 @@ export class CustomErrorHandler implements ExpressErrorMiddlewareInterface {
       });
     }
 
-    // logger.error(`Execution failed: ${err}`);
+    logger?.error(`Execution failed: ${err}`);
 
     const errorMessage = ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
 
