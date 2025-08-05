@@ -6,7 +6,7 @@ import { isProduction } from '../env/detector';
 import { CustomErrorHandler } from '../error/error.handler';
 import logger from '../logger';
 
-const allowOrigins = [process.env.BASE_URL, process.env.ADMIN_PANEL_URL];
+const allowOrigins = [process.env.BASE_URL, process.env.ADMIN_PANEL_URL, process.env.DEV_TESTING_URL];
 
 export const BaseServer = {
   init: (controllers: Array<Function>, routePrefix: string = '') => {
