@@ -10,7 +10,7 @@ const routing_controllers_1 = require("routing-controllers");
 const detector_1 = require("../env/detector");
 const error_handler_1 = require("../error/error.handler");
 const logger_1 = __importDefault(require("../logger"));
-const allowOrigins = [process.env.BASE_URL, process.env.ADMIN_PANEL_URL];
+const allowOrigins = [process.env.BASE_URL, process.env.ADMIN_PANEL_URL, process.env.DEV_TESTING_URL];
 exports.BaseServer = {
     init: (controllers, routePrefix = '') => {
         const app = (0, routing_controllers_1.createExpressServer)({
