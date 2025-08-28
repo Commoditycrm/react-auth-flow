@@ -17,10 +17,12 @@ import {
 export class FirebaseUserController {
   emailService: sendgrid.EmailService;
   projectEmailService: sendgrid.ProjectEmailService;
+  waService: sendgrid.WhatsAppService;
 
   constructor() {
     this.emailService = sendgrid.EmailService.getInstance();
     this.projectEmailService = sendgrid.ProjectEmailService.getInstance();
+    this.waService = sendgrid.WhatsAppService.getInstance();
   }
 
   @Post('/')
@@ -221,7 +223,9 @@ export class FirebaseUserController {
     ) {
       throw new Error('Input Validation Error');
     }
-    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
+    const url = `${EnvLoader.getOrThrow(
+      'BASE_URL',
+    )}/${mention_url}?redirect=true`;
 
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
@@ -237,10 +241,8 @@ export class FirebaseUserController {
     return { success: true };
   }
 
-  @Post('/assign') async assignUser(
-    @Body()
-    taggedData: UserTaggedDetail,
-  ) {
+  @Post('/assign')
+  async assignUser(@Body() taggedData: UserTaggedDetail) {
     const {
       mention_url,
       item_name,
@@ -262,18 +264,63 @@ export class FirebaseUserController {
       throw new Error('Input Validation Error');
     }
 
-    const url = `${EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
+    const url = `${EnvLoader.getOrThrow(
+      'BASE_URL',
+    )}/${mention_url}?redirect=true`;
 
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
       type: EmailType.ASSIGN_USER_IN_WORK_ITEM,
       mention_url: url,
     };
+
     const userExists = await FirebaseFunctions.getInstance().getUserByEmail(
       email,
     );
     if (!userExists) throw new Error('Unauthorized Request!');
+
     await this.projectEmailService.sendProjectEmail(useEmailDetail);
+    console.log(userDetail);
+
+    try {
+      const contentSid = EnvLoader.getOrThrow('TWILIO_WA_TASK_ASSIGNED_SID');
+
+      const targets = userDetail.filter((u) => !!u.phoneNumber);
+
+      if (targets.length === 0) {
+        logger?.warn(`No WhatsApp phone; skipped WA send for item ${item_name}`);
+      } else {
+        const sends = targets.map((t) =>
+          this.waService.sendTemplate({
+            to: t.phoneNumber, 
+            contentSid,
+            variables: {
+              user: t.name, 
+              task_name: item_name,
+              assignee: mentioner_name,
+              // link: url, // only if template has {{link}}
+            },
+          }),
+        );
+
+        const results = await Promise.allSettled(sends);
+        const ok = results.filter((r) => r.status === 'fulfilled').length;
+        const fail = results.length - ok;
+        logger?.info(
+          `WhatsApp task assignment for item ${item_name}: sent=${ok}, failed=${fail}`,
+        );
+
+        results.forEach((r) => {
+          if (r.status === 'rejected') {
+            const e: any = r.reason;
+            logger?.error(`WA error ${e?.code ?? ''}: ${e?.message ?? e}`);
+          }
+        });
+      }
+    } catch (waErr: any) {
+      logger?.error(`WhatsApp send failed: ${waErr?.message ?? waErr}`);
+    }
+
     return { success: true };
   }
 

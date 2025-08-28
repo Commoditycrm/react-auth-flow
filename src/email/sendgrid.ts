@@ -9,7 +9,10 @@ import {
   RemindersEmailProps,
   RemoveUserProps,
   UserTaggedDetail,
+  WhatsAppMediaPayload,
+  WhatsAppTextPayload,
 } from '../interfaces';
+import { Twilio } from 'twilio';
 
 export class EmailService {
   static instance: EmailService;
@@ -217,5 +220,67 @@ export class ProjectEmailService {
       SendGridClient.setApiKey(ProjectEmailService.instance.apiKey);
     }
     return ProjectEmailService.instance;
+  }
+}
+
+export class WhatsAppService {
+  private static instance: WhatsAppService;
+  private client: Twilio;
+  private fromNumber: string;
+
+  private constructor() {
+    const sid = EnvLoader.getOrThrow('TWILIO_ACCOUNT_SID');
+    const token = EnvLoader.getOrThrow('TWILIO_AUTH_TOKEN');
+    const from = EnvLoader.getOrThrow('TWILIO_WHATSAPP_FROM');
+    if (!sid || !token || !from) {
+      throw new Error(
+        'Missing Twilio env vars. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM',
+      );
+    }
+    this.client = new Twilio(sid, token);
+    this.fromNumber = from.startsWith('whatsapp:') ? from : `whatsapp:${from}`;
+  }
+
+  static getInstance(): WhatsAppService {
+    if (!WhatsAppService.instance) {
+      WhatsAppService.instance = new WhatsAppService();
+    }
+    return WhatsAppService.instance;
+  }
+
+  private toWhatsApp(num: string) {
+    return num.startsWith('whatsapp:') ? num : `whatsapp:${num}`;
+  }
+
+  async sendText({ to, body }: WhatsAppTextPayload) {
+    return this.client.messages.create({
+      from: this.fromNumber,
+      to: this.toWhatsApp(to),
+      body,
+    });
+  }
+
+  async sendMedia({ to, body, mediaUrl }: WhatsAppMediaPayload) {
+    return this.client.messages.create({
+      from: this.fromNumber,
+      to: this.toWhatsApp(to),
+      body,
+      mediaUrl,
+    });
+  }
+
+  // NEW: send a Twilio Content Template (WhatsApp-approved)
+  async sendTemplate(opts: {
+    to: string;
+    contentSid: string; // e.g. "HXbd846a348ea533e8ef385bae02686f9c"
+    variables: Record<string, string>; // must match template placeholders
+  }) {
+    const { to, contentSid, variables } = opts;
+    return this.client.messages.create({
+      from: this.fromNumber,
+      to: this.toWhatsApp(to),
+      contentSid,
+      contentVariables: JSON.stringify(variables),
+    });
   }
 }

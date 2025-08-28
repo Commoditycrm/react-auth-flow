@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ProjectEmailService = exports.EmailService = void 0;
+exports.WhatsAppService = exports.ProjectEmailService = exports.EmailService = void 0;
 const mail_1 = __importDefault(require("@sendgrid/mail"));
 const env_loader_1 = require("../env/env.loader");
 const logger_1 = __importDefault(require("../logger"));
+const twilio_1 = require("twilio");
 class EmailService {
     constructor() {
         this.apiKey = env_loader_1.EnvLoader.getOrThrow('SENDGRID_KEY');
@@ -217,3 +218,56 @@ class ProjectEmailService {
     }
 }
 exports.ProjectEmailService = ProjectEmailService;
+class WhatsAppService {
+    constructor() {
+        const sid = env_loader_1.EnvLoader.getOrThrow('TWILIO_ACCOUNT_SID');
+        const token = env_loader_1.EnvLoader.getOrThrow('TWILIO_AUTH_TOKEN');
+        const from = env_loader_1.EnvLoader.getOrThrow('TWILIO_WHATSAPP_FROM');
+        if (!sid || !token || !from) {
+            throw new Error('Missing Twilio env vars. Set TWILIO_ACCOUNT_SID, TWILIO_AUTH_TOKEN, TWILIO_WHATSAPP_FROM');
+        }
+        this.client = new twilio_1.Twilio(sid, token);
+        this.fromNumber = from.startsWith('whatsapp:') ? from : `whatsapp:${from}`;
+    }
+    static getInstance() {
+        if (!WhatsAppService.instance) {
+            WhatsAppService.instance = new WhatsAppService();
+        }
+        return WhatsAppService.instance;
+    }
+    toWhatsApp(num) {
+        return num.startsWith('whatsapp:') ? num : `whatsapp:${num}`;
+    }
+    sendText(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ to, body }) {
+            return this.client.messages.create({
+                from: this.fromNumber,
+                to: this.toWhatsApp(to),
+                body,
+            });
+        });
+    }
+    sendMedia(_a) {
+        return __awaiter(this, arguments, void 0, function* ({ to, body, mediaUrl }) {
+            return this.client.messages.create({
+                from: this.fromNumber,
+                to: this.toWhatsApp(to),
+                body,
+                mediaUrl,
+            });
+        });
+    }
+    // NEW: send a Twilio Content Template (WhatsApp-approved)
+    sendTemplate(opts) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { to, contentSid, variables } = opts;
+            return this.client.messages.create({
+                from: this.fromNumber,
+                to: this.toWhatsApp(to),
+                contentSid,
+                contentVariables: JSON.stringify(variables),
+            });
+        });
+    }
+}
+exports.WhatsAppService = WhatsAppService;
