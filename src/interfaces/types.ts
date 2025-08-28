@@ -43,7 +43,7 @@ export interface EmailDetail {
 }
 
 export interface UserTaggedDetail extends EmailDetail {
-  userDetail: Array<{ email: string; name: string }>;
+  userDetail: Array<{ email: string; name: string,phoneNumber:string }>;
   user_name: string;
   mentioner_name: string;
   item_name: string;
@@ -92,4 +92,28 @@ export type RemindersType = Omit<ActivationOrgType, 'orgName' | ''> & {
 export type RemindersEmailProps = Omit<ActivationOrgEmailProps, 'orgName'> & {
   taskCount: number;
   plural: string;
+};
+
+// interfaces/whatsapp.ts
+export enum WhatsAppTemplate {
+  REMOVE_USER_FROM_PROJECT = 'REMOVE_USER_FROM_PROJECT',
+}
+
+export type RemoveUserWhatsAppProps = RemoveUserBodyType & {
+  type: WhatsAppTemplate.REMOVE_USER_FROM_PROJECT;
+};
+
+export type WhatsAppTextPayload = {
+  to: string; // Recipient phone number, e.g. "+91XXXXXXXXXX"
+  body: string; // Text message
+};
+
+export type WhatsAppMediaPayload = WhatsAppTextPayload & {
+  mediaUrl?: string[]; // optional list of media URLs (image, pdf, etc.)
+};
+
+type WhatsAppTemplatePayload = {
+  to: string; 
+  contentSid: string; 
+  variables: Record<string, string>; 
 };

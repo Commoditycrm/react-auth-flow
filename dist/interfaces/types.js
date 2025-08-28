@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.EmailType = exports.FirebaseConfig = void 0;
+exports.WhatsAppTemplate = exports.EmailType = exports.FirebaseConfig = void 0;
 var FirebaseConfig;
 (function (FirebaseConfig) {
     FirebaseConfig["FIREBASE_API_KEY"] = "FIREBASE_API_KEY";
@@ -26,3 +26,8 @@ var EmailType;
     EmailType["ACTIVATE_ORG"] = "ACTIVATE_ORG";
     EmailType["REMINDER"] = "REMINDER";
 })(EmailType || (exports.EmailType = EmailType = {}));
+// interfaces/whatsapp.ts
+var WhatsAppTemplate;
+(function (WhatsAppTemplate) {
+    WhatsAppTemplate["REMOVE_USER_FROM_PROJECT"] = "REMOVE_USER_FROM_PROJECT";
+})(WhatsAppTemplate || (exports.WhatsAppTemplate = WhatsAppTemplate = {}));
