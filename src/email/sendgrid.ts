@@ -269,11 +269,10 @@ export class WhatsAppService {
     });
   }
 
-  // NEW: send a Twilio Content Template (WhatsApp-approved)
   async sendTemplate(opts: {
     to: string;
-    contentSid: string; // e.g. "HXbd846a348ea533e8ef385bae02686f9c"
-    variables: Record<string, string>; // must match template placeholders
+    contentSid: string; 
+    variables: Record<string, string>;
   }) {
     const { to, contentSid, variables } = opts;
     return this.client.messages.create({
