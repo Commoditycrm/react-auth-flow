@@ -257,7 +257,6 @@ class WhatsAppService {
             });
         });
     }
-    // NEW: send a Twilio Content Template (WhatsApp-approved)
     sendTemplate(opts) {
         return __awaiter(this, void 0, void 0, function* () {
             const { to, contentSid, variables } = opts;
