@@ -95,12 +95,14 @@ export class FirebaseFunctions {
     email: string;
     password: string;
     name: string;
+    phoneNumber: string;
   }): Promise<{ user: UserRecord }> {
     const user = await this.admin.app.auth().createUser({
       email: userInput?.email,
       password: userInput?.password,
       displayName: userInput?.name,
       emailVerified: true,
+      phoneNumber: userInput.phoneNumber,
     });
     await this.setUserClaims(user.uid, user.email);
     // const token = await this.admin.app.auth().createCustomToken(user.uid);

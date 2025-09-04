@@ -372,6 +372,7 @@ export class FirebaseUserController {
       password: string;
       photoURL: string;
       name: string;
+      phoneNumber:string
     },
   ) {
     const { email, password, name, photoURL } = user;
