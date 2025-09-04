@@ -44,6 +44,7 @@ class FirebaseFunctions {
                 email: userInput === null || userInput === void 0 ? void 0 : userInput.email,
                 password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
                 displayName: userInput === null || userInput === void 0 ? void 0 : userInput.name,
+                phoneNumber: userInput.phoneNumber,
             });
             yield this.setUserClaims(user.uid, user.email);
             const verifyLink = yield this.generateVerificationLink(userInput.email);
@@ -96,6 +97,7 @@ class FirebaseFunctions {
                 password: userInput === null || userInput === void 0 ? void 0 : userInput.password,
                 displayName: userInput === null || userInput === void 0 ? void 0 : userInput.name,
                 emailVerified: true,
+                phoneNumber: userInput.phoneNumber,
             });
             yield this.setUserClaims(user.uid, user.email);
             // const token = await this.admin.app.auth().createCustomToken(user.uid);

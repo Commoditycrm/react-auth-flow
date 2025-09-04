@@ -33,9 +33,10 @@ export class FirebaseUserController {
       name: string;
       password: string;
       photoURL: string;
+      phoneNumber: string;
     },
   ) {
-    const { email, password, name } = user;
+    const { email, password, name, phoneNumber } = user;
 
     logger?.info(`Processing request for : ${email}`);
 
@@ -43,6 +44,7 @@ export class FirebaseUserController {
       email: email?.trim(),
       password,
       name,
+      phoneNumber,
     });
     const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
 
@@ -372,6 +374,7 @@ export class FirebaseUserController {
       password: string;
       photoURL: string;
       name: string;
+      phoneNumber: string;
     },
   ) {
     const { email, password, name, photoURL } = user;
