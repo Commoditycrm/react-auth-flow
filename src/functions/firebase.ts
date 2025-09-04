@@ -36,11 +36,13 @@ export class FirebaseFunctions {
     email: string;
     password: string;
     name: string;
+    phoneNumber: string;
   }) {
     const user = await this.admin.app.auth().createUser({
       email: userInput?.email,
       password: userInput?.password,
       displayName: userInput?.name,
+      phoneNumber: userInput.phoneNumber,
     });
 
     await this.setUserClaims(user.uid, user.email);

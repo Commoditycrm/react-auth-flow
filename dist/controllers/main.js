@@ -63,12 +63,13 @@ let FirebaseUserController = class FirebaseUserController {
     }
     createUser(user) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { email, password, name } = user;
+            const { email, password, name, phoneNumber } = user;
             logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.info(`Processing request for : ${email}`);
             const verifyLink = yield firebase_1.FirebaseFunctions.getInstance().createUser({
                 email: email === null || email === void 0 ? void 0 : email.trim(),
                 password,
                 name,
+                phoneNumber,
             });
             const expirationTime = new Date(Date.now() + 3600 * 1000).toISOString();
             const emailDetail = {
