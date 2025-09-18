@@ -240,48 +240,48 @@ export class FirebaseUserController {
     if (!userExists) throw new Error('Unauthorized Request!');
 
     await this.projectEmailService.sendProjectEmail(useEmailDetail);
-    try {
-      const str: string = JSON.stringify(message);
-      const contentSid = EnvLoader.getOrThrow('TWILIO_WA_TAG_USER');
+    // try {
+    //   const str: string = JSON.stringify(message);
+    //   const contentSid = EnvLoader.getOrThrow('TWILIO_WA_TAG_USER');
 
-      const targets = userDetail.filter((u) => !!u.phoneNumber);
+    //   const targets = userDetail.filter((u) => !!u.phoneNumber);
 
-      if (targets.length === 0) {
-        logger?.warn(
-          `No WhatsApp phone; skipped WA send for item ${item_name}`,
-        );
-      } else {
-        const sends = targets.map((t) =>
-          this.waService.sendTemplate({
-            to: t.phoneNumber,
-            contentSid,
-            variables: {
-              user: t.name,
-              task_name: item_name,
-              commented_by: mentioner_name,
-              link: url,
-              comment_message: str,
-            },
-          }),
-        );
+    //   if (targets.length === 0) {
+    //     logger?.warn(
+    //       `No WhatsApp phone; skipped WA send for item ${item_name}`,
+    //     );
+    //   } else {
+    //     const sends = targets.map((t) =>
+    //       this.waService.sendTemplate({
+    //         to: t.phoneNumber,
+    //         contentSid,
+    //         variables: {
+    //           user: t.name,
+    //           task_name: item_name,
+    //           commented_by: mentioner_name,
+    //           link: url,
+    //           comment_message: str,
+    //         },
+    //       }),
+    //     );
 
-        const results = await Promise.allSettled(sends);
-        const ok = results.filter((r) => r.status === 'fulfilled').length;
-        const fail = results.length - ok;
-        logger?.info(
-          `WhatsApp task assignment for item ${item_name}: sent=${ok}, failed=${fail}`,
-        );
+    //     const results = await Promise.allSettled(sends);
+    //     const ok = results.filter((r) => r.status === 'fulfilled').length;
+    //     const fail = results.length - ok;
+    //     logger?.info(
+    //       `WhatsApp task assignment for item ${item_name}: sent=${ok}, failed=${fail}`,
+    //     );
 
-        results.forEach((r) => {
-          if (r.status === 'rejected') {
-            const e: any = r.reason;
-            logger?.error(`WA error ${e?.code ?? ''}: ${e?.message ?? e}`);
-          }
-        });
-      }
-    } catch (waErr: any) {
-      logger?.error(`WhatsApp send failed: ${waErr?.message ?? waErr}`);
-    }
+    //     results.forEach((r) => {
+    //       if (r.status === 'rejected') {
+    //         const e: any = r.reason;
+    //         logger?.error(`WA error ${e?.code ?? ''}: ${e?.message ?? e}`);
+    //       }
+    //     });
+    //   }
+    // } catch (waErr: any) {
+    //   logger?.error(`WhatsApp send failed: ${waErr?.message ?? waErr}`);
+    // }
     return { success: true };
   }
 
@@ -325,44 +325,44 @@ export class FirebaseUserController {
 
     await this.projectEmailService.sendProjectEmail(useEmailDetail);
 
-    try {
-      const contentSid = EnvLoader.getOrThrow('TWILIO_WA_TASK_ASSIGNED_SID');
+    // try {
+    //   const contentSid = EnvLoader.getOrThrow('TWILIO_WA_TASK_ASSIGNED_SID');
 
-      const targets = userDetail.filter((u) => !!u.phoneNumber);
+    //   const targets = userDetail.filter((u) => !!u.phoneNumber);
 
-      if (targets.length === 0) {
-        logger?.warn(`No WhatsApp phone; skipped WA send for item ${item_name}`);
-      } else {
-        const sends = targets.map((t) =>
-          this.waService.sendTemplate({
-            to: t.phoneNumber,
-            contentSid,
-            variables: {
-              user: t.name,
-              task_name: item_name,
-              assignee: mentioner_name,
-              link: url,
-            },
-          }),
-        );
+    //   if (targets.length === 0) {
+    //     logger?.warn(`No WhatsApp phone; skipped WA send for item ${item_name}`);
+    //   } else {
+    //     const sends = targets.map((t) =>
+    //       this.waService.sendTemplate({
+    //         to: t.phoneNumber,
+    //         contentSid,
+    //         variables: {
+    //           user: t.name,
+    //           task_name: item_name,
+    //           assignee: mentioner_name,
+    //           link: url,
+    //         },
+    //       }),
+    //     );
 
-        const results = await Promise.allSettled(sends);
-        const ok = results.filter((r) => r.status === 'fulfilled').length;
-        const fail = results.length - ok;
-        logger?.info(
-          `WhatsApp task assignment for item ${item_name}: sent=${ok}, failed=${fail}`,
-        );
+    //     const results = await Promise.allSettled(sends);
+    //     const ok = results.filter((r) => r.status === 'fulfilled').length;
+    //     const fail = results.length - ok;
+    //     logger?.info(
+    //       `WhatsApp task assignment for item ${item_name}: sent=${ok}, failed=${fail}`,
+    //     );
 
-        results.forEach((r) => {
-          if (r.status === 'rejected') {
-            const e: any = r.reason;
-            logger?.error(`WA error ${e?.code ?? ''}: ${e?.message ?? e}`);
-          }
-        });
-      }
-    } catch (waErr: any) {
-      logger?.error(`WhatsApp send failed: ${waErr?.message ?? waErr}`);
-    }
+    //     results.forEach((r) => {
+    //       if (r.status === 'rejected') {
+    //         const e: any = r.reason;
+    //         logger?.error(`WA error ${e?.code ?? ''}: ${e?.message ?? e}`);
+    //       }
+    //     });
+    //   }
+    // } catch (waErr: any) {
+    //   logger?.error(`WhatsApp send failed: ${waErr?.message ?? waErr}`);
+    // }
 
     return { success: true };
   }
