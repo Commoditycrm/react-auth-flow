@@ -256,11 +256,11 @@ export class FirebaseUserController {
             to: t.phoneNumber,
             contentSid,
             variables: {
-              user: t.name,
-              task_name: item_name,
-              commented_by: mentioner_name,
-              link: url,
-              comment_message: str,
+              '1': t.name,
+              '2': mentioner_name,
+              '3': item_name,
+              '4': str,
+              '5': url,
             },
           }),
         );
@@ -340,10 +340,10 @@ export class FirebaseUserController {
             to: t.phoneNumber,
             contentSid,
             variables: {
-              user: t.name,
-              task_name: item_name,
-              assignee: mentioner_name,
-              link: url,
+              '1': t.name,
+              '2': mentioner_name,
+              '3': item_name,
+              '4': url,
             },
           }),
         );
