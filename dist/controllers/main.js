@@ -174,14 +174,15 @@ let FirebaseUserController = class FirebaseUserController {
     tagUser(taggedData) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const { mention_url, item_name, mentioner_name, email, userDetail, message, item_type, } = taggedData;
+            const { mention_url, item_name, mentioner_name, email, userDetail, message, item_type, projectName, } = taggedData;
             if (!mention_url ||
                 !item_name ||
                 !mentioner_name ||
                 !email ||
                 !userDetail ||
                 !message ||
-                !item_type) {
+                !item_type ||
+                !projectName) {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
@@ -191,7 +192,7 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Unauthorized Request!');
             yield this.projectEmailService.sendProjectEmail(useEmailDetail);
             try {
-                const str = JSON.stringify(message);
+                const comment = JSON.stringify(message);
                 const contentSid = env_loader_1.EnvLoader.getOrThrow('TWILIO_WA_TAG_USER');
                 const targets = userDetail.filter((u) => !!u.phoneNumber);
                 if (targets.length === 0) {
@@ -204,9 +205,10 @@ let FirebaseUserController = class FirebaseUserController {
                         variables: {
                             '1': t.name,
                             '2': mentioner_name,
-                            '3': item_name,
-                            '4': str,
-                            '5': url,
+                            '3': projectName,
+                            '4': item_name,
+                            '5': comment,
+                            '6': url,
                         },
                     }));
                     const results = yield Promise.allSettled(sends);
@@ -231,13 +233,14 @@ let FirebaseUserController = class FirebaseUserController {
     assignUser(taggedData) {
         return __awaiter(this, void 0, void 0, function* () {
             var _a;
-            const { mention_url, item_name, mentioner_name, email, userDetail, item_type, item_uid, } = taggedData;
+            const { mention_url, item_name, mentioner_name, email, userDetail, item_type, projectName, item_uid, } = taggedData;
             if (!mention_url ||
                 !item_name ||
                 !mentioner_name ||
                 !email ||
                 !userDetail ||
-                !item_type) {
+                !item_type ||
+                !projectName) {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
@@ -259,8 +262,9 @@ let FirebaseUserController = class FirebaseUserController {
                         variables: {
                             '1': t.name,
                             '2': mentioner_name,
-                            '3': item_name,
-                            '4': url,
+                            '3': projectName,
+                            '4': item_name,
+                            '5': url,
                         },
                     }));
                     const results = yield Promise.allSettled(sends);
