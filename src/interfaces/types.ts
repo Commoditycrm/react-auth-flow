@@ -51,6 +51,7 @@ export interface UserTaggedDetail extends EmailDetail {
   email: string;
   item_type: string;
   item_uid: number;
+  projectName:string
 }
 
 export type RemoveUserBodyType = {
