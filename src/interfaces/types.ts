@@ -129,4 +129,5 @@ export type CreateEventBodyType = Omit<RemoveUserBodyType, 'userEmail'> & {
 
 export interface CreateEventProps extends CreateEventBodyType {
   type: string;
+  url:string;
 }
