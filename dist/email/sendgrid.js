@@ -180,13 +180,13 @@ class EmailService {
     }
     createEvent(emailDetail) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { orgOwnerEmail, projectOwnerEmail, description, type, path } = emailDetail, rest = __rest(emailDetail, ["orgOwnerEmail", "projectOwnerEmail", "description", "type", "path"]);
+            const { orgOwnerEmail, projectOwnerEmail, description, type, url } = emailDetail, rest = __rest(emailDetail, ["orgOwnerEmail", "projectOwnerEmail", "description", "type", "url"]);
             const sendGridMessage = {
                 from: this.from,
                 to: projectOwnerEmail,
                 cc: orgOwnerEmail,
                 templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
-                dynamicTemplateData: Object.assign({ viewUrl: path }, rest),
+                dynamicTemplateData: Object.assign({ viewUrl: url }, rest),
             };
             try {
                 yield mail_1.default.send(sendGridMessage);

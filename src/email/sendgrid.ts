@@ -180,7 +180,7 @@ export class EmailService {
       projectOwnerEmail,
       description,
       type,
-      path,
+      url,
       ...rest
     } = emailDetail;
     const sendGridMessage: MailDataRequired = {
@@ -189,7 +189,7 @@ export class EmailService {
       cc: orgOwnerEmail,
       templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
       dynamicTemplateData: {
-        viewUrl: path,
+        viewUrl: url,
         ...rest,
       },
     };
