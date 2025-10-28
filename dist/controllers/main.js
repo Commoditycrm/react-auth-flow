@@ -266,11 +266,7 @@ let FirebaseUserController = class FirebaseUserController {
                             '2': mentioner_name,
                             '3': projectName,
                             '4': item_name,
-<<<<<<< HEAD
-                            '6': url,
-=======
-                            '5': wsUrl,
->>>>>>> 108e36c (added event create email service)
+                            '6': wsUrl,
                         },
                     }));
                     const results = yield Promise.allSettled(sends);
