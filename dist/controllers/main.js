@@ -186,6 +186,7 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
+            const wsUrl = `${mention_url}?redirect=true`;
             const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.TAGGING_USER, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
@@ -208,7 +209,7 @@ let FirebaseUserController = class FirebaseUserController {
                             '3': projectName,
                             '4': item_name,
                             '5': comment,
-                            '6': url,
+                            '6': wsUrl,
                         },
                     }));
                     const results = yield Promise.allSettled(sends);
@@ -244,6 +245,7 @@ let FirebaseUserController = class FirebaseUserController {
                 throw new Error('Input Validation Error');
             }
             const url = `${env_loader_1.EnvLoader.getOrThrow('BASE_URL')}/${mention_url}?redirect=true`;
+            const wsUrl = `${mention_url}?redirect=true`;
             const useEmailDetail = Object.assign(Object.assign({}, taggedData), { type: interfaces_1.EmailType.ASSIGN_USER_IN_WORK_ITEM, mention_url: url });
             const userExists = yield firebase_1.FirebaseFunctions.getInstance().getUserByEmail(email);
             if (!userExists)
@@ -264,7 +266,7 @@ let FirebaseUserController = class FirebaseUserController {
                             '2': mentioner_name,
                             '3': projectName,
                             '4': item_name,
-                            '6': url,
+                            '6': wsUrl,
                         },
                     }));
                     const results = yield Promise.allSettled(sends);

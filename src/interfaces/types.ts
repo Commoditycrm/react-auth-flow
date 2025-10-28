@@ -34,6 +34,7 @@ export enum EmailType {
   DELETE_ORG = 'DELETE_ORG',
   ACTIVATE_ORG = 'ACTIVATE_ORG',
   REMINDER = 'REMINDER',
+  CREATE_EVENT = 'CREATE_EVENT',
 }
 
 export interface EmailDetail {
@@ -43,7 +44,7 @@ export interface EmailDetail {
 }
 
 export interface UserTaggedDetail extends EmailDetail {
-  userDetail: Array<{ email: string; name: string,phoneNumber:string }>;
+  userDetail: Array<{ email: string; name: string; phoneNumber: string }>;
   user_name: string;
   mentioner_name: string;
   item_name: string;
@@ -51,7 +52,7 @@ export interface UserTaggedDetail extends EmailDetail {
   email: string;
   item_type: string;
   item_uid: number;
-  projectName:string
+  projectName: string;
 }
 
 export type RemoveUserBodyType = {
@@ -113,8 +114,19 @@ export type WhatsAppMediaPayload = WhatsAppTextPayload & {
   mediaUrl?: string[]; // optional list of media URLs (image, pdf, etc.)
 };
 
-type WhatsAppTemplatePayload = {
-  to: string; 
-  contentSid: string; 
-  variables: Record<string, string>; 
+export type CreateEventBodyType = Omit<RemoveUserBodyType, 'userEmail'> & {
+  title: string;
+  description: string;
+  startLocal: string;
+  endLocal: string;
+  resourceName: string;
+  duration: string;
+  orgOwnerEmail: string;
+  projectOwnerEmail: string;
+  path:string;
+  createdAt:string;
 };
+
+export interface CreateEventProps extends CreateEventBodyType {
+  type: string;
+}
