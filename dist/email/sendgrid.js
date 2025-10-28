@@ -8,6 +8,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -164,6 +175,26 @@ class EmailService {
             catch (error) {
                 logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`While sending reminder:${error}`);
                 throw new Error(`Field to send reminder`);
+            }
+        });
+    }
+    createEvent(emailDetail) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const { orgOwnerEmail, projectOwnerEmail, description, type, path } = emailDetail, rest = __rest(emailDetail, ["orgOwnerEmail", "projectOwnerEmail", "description", "type", "path"]);
+            const sendGridMessage = {
+                from: this.from,
+                to: projectOwnerEmail,
+                cc: orgOwnerEmail,
+                templateId: env_loader_1.EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+                dynamicTemplateData: Object.assign({ viewUrl: path }, rest),
+            };
+            try {
+                yield mail_1.default.send(sendGridMessage);
+                return true;
+            }
+            catch (error) {
+                logger_1.default === null || logger_1.default === void 0 ? void 0 : logger_1.default.error(`Field to send email to create event:${error}`);
+                throw new Error(`Field send email for event:${error}`);
             }
         });
     }

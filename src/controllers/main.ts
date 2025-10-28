@@ -231,6 +231,8 @@ export class FirebaseUserController {
       'BASE_URL',
     )}/${mention_url}?redirect=true`;
 
+    const wsUrl = `${mention_url}?redirect=true`;
+
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
       type: EmailType.TAGGING_USER,
@@ -263,7 +265,7 @@ export class FirebaseUserController {
               '3': projectName,
               '4': item_name,
               '5': comment,
-              '6': url,
+              '6': wsUrl,
             },
           }),
         );
@@ -317,6 +319,8 @@ export class FirebaseUserController {
       'BASE_URL',
     )}/${mention_url}?redirect=true`;
 
+    const wsUrl = `${mention_url}?redirect=true`;
+
     const useEmailDetail: UserTaggedDetail = {
       ...taggedData,
       type: EmailType.ASSIGN_USER_IN_WORK_ITEM,
@@ -349,7 +353,7 @@ export class FirebaseUserController {
               '2': mentioner_name,
               '3': projectName,
               '4': item_name,
-              '6': url,
+              '6': wsUrl,
             },
           }),
         );

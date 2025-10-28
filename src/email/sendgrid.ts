@@ -3,6 +3,7 @@ import { EnvLoader } from '../env/env.loader';
 import logger from '../logger';
 import {
   ActivationOrgEmailProps,
+  CreateEventProps,
   DeactivateOrgType,
   DeleteOrgSendEmailProps,
   EmailDetail,
@@ -173,6 +174,35 @@ export class EmailService {
     }
   }
 
+  async createEvent(emailDetail: CreateEventProps): Promise<boolean> {
+    const {
+      orgOwnerEmail,
+      projectOwnerEmail,
+      description,
+      type,
+      path,
+      ...rest
+    } = emailDetail;
+    const sendGridMessage: MailDataRequired = {
+      from: this.from,
+      to: projectOwnerEmail,
+      cc: orgOwnerEmail,
+      templateId: EnvLoader.getOrThrow(`${type}_TEMPLATE_ID`),
+      dynamicTemplateData: {
+        viewUrl: path,
+        ...rest,
+      },
+    };
+
+    try {
+      await SendGridClient.send(sendGridMessage);
+      return true;
+    } catch (error: any) {
+      logger?.error(`Field to send email to create event:${error}`);
+      throw new Error(`Field send email for event:${error}`);
+    }
+  }
+
   static getInstance() {
     if (!EmailService.instance) {
       EmailService.instance = new EmailService();
@@ -271,7 +301,7 @@ export class WhatsAppService {
 
   async sendTemplate(opts: {
     to: string;
-    contentSid: string; 
+    contentSid: string;
     variables: Record<string, string>;
   }) {
     const { to, contentSid, variables } = opts;

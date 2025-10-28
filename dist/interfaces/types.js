@@ -25,6 +25,7 @@ var EmailType;
     EmailType["DELETE_ORG"] = "DELETE_ORG";
     EmailType["ACTIVATE_ORG"] = "ACTIVATE_ORG";
     EmailType["REMINDER"] = "REMINDER";
+    EmailType["CREATE_EVENT"] = "CREATE_EVENT";
 })(EmailType || (exports.EmailType = EmailType = {}));
 // interfaces/whatsapp.ts
 var WhatsAppTemplate;
