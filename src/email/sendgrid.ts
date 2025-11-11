@@ -178,7 +178,6 @@ export class EmailService {
     const {
       orgOwnerEmail,
       projectOwnerEmail,
-      description,
       type,
       url,
       ...rest

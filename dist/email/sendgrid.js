@@ -180,7 +180,7 @@ class EmailService {
     }
     createEvent(emailDetail) {
         return __awaiter(this, void 0, void 0, function* () {
-            const { orgOwnerEmail, projectOwnerEmail, description, type, url } = emailDetail, rest = __rest(emailDetail, ["orgOwnerEmail", "projectOwnerEmail", "description", "type", "url"]);
+            const { orgOwnerEmail, projectOwnerEmail, type, url } = emailDetail, rest = __rest(emailDetail, ["orgOwnerEmail", "projectOwnerEmail", "type", "url"]);
             const sendGridMessage = {
                 from: this.from,
                 to: projectOwnerEmail,
