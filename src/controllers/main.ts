@@ -94,7 +94,7 @@ export class FirebaseUserController {
     await this.emailService.sendEmail(emailDetail);
 
     logger?.info(`Email sent for: ${email}`);
-    return { success: true };
+    return { success: true, verifyLink };
   }
 
   @Post('/password-reset')
@@ -195,9 +195,11 @@ export class FirebaseUserController {
 
     await this.emailService.sendEmail(emailDetail);
 
-    logger?.info(`Invited Email sent for: ${inviteeEmail} and link:${invitationLink}`);
+    logger?.info(
+      `Invited Email sent for: ${inviteeEmail} and link:${invitationLink}`,
+    );
 
-    return { success: true, token };
+    return { success: true, token, invitationLink };
   }
 
   @Post('/tag_user')
